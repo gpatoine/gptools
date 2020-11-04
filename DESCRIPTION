@@ -1,0 +1,21 @@
+Package: gptools
+Type: Package
+Title: Collection of useful functions
+Version: 0.1.0
+Author: Guillaume Patoine
+Maintainer: Guillaume Patoine <gpatoine@gmail.com>
+Description: A number of functions to support my work, so I don't have them all at the same place and that I don't need to load them one by one each time. Some of these might be useful for other people too. Just ask if you have questions.
+License: Dunno
+Encoding: UTF-8
+LazyData: true
+Depends:
+  tidyverse,
+  leaflet,
+  tools,
+  gsubfn,
+  rio,
+  sqldf,
+  tools,
+  sf,
+  raster
+RoxygenNote: 7.1.1
