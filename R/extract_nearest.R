@@ -1,6 +1,7 @@
-
-
-
+#created: 2020-10-15
+#updated: 2020-11-05
+# author: Guillaume Patoine <guillaume.patoine@idiv.de>
+#purpose: extract value from nearest raster cell
 
 #' Extract from nearest available pixel
 #'
@@ -15,24 +16,40 @@
 #' @export
 extract_nearest <- function(x, y, max_range = NULL) {
 
-  if (is.null(max_range)) {
-    max_range <- mean(res(x)) * 5
+  y0 <- y
+  y <- y %>% mutate(uni_enl = row_number()) %>% select(uni_enl)
 
+  # group same locations
+  uni_loc <- y %>% dplyr::distinct(geometry, .keep_all = TRUE)
+
+  y <- y %>%
+    mutate(match_loc = purrr::map_dbl(seq_len(nrow(y)),
+                                      ~ uni_loc$uni_enl[st_equals(uni_loc, y[.x,], sparse = F)])) # st_equals much faster then ==
+
+  if (is.null(max_range)) {
+    max_range <- mean(res(x)) * 5 * (if (isLonLat(x)) 111000 else 1) # in meters
   }
 
+  # dispatch depending n layers
   if (class(x) == "RasterLayer") {
-    extract_nearest_layer(x, y, max_range)
+    vals <- extract_nearest_layer(x, y = uni_loc, max_range)
+    vals <- data.frame(vals)
 
   } else if (class(x) %in% c("RasterBrick", "RasterStack")) {
-
     xus <- unstack(x)
-    vals <- purrr::map_dfc(xus, ~ extract_nearest_layer(.xus, y, max_range))
-
-    return(vals)
+    vals <- purrr::map_dfc(xus, ~ extract_nearest_layer(.x, y = uni_loc, max_range))
 
   } else {
     stop("Not a Raster* object")
   }
+
+  uni_vals <- vals %>% set_names(names(x)) %>% bind_cols(st_drop_geometry(uni_loc), .) %>%
+    rename(match_loc = uni_enl)
+
+  y <- left_join(st_drop_geometry(y), uni_vals, by = "match_loc") %>% select(-c(uni_enl, match_loc))
+
+  # return vector or df
+  if (ncol(y) == 1) y[[1]] else y
 
 }
 
@@ -53,43 +70,38 @@ extract_nearest <- function(x, y, max_range = NULL) {
 #' @examples
 extract_nearest_layer <- function(x, y, max_range = NULL) {
 
-  # group same locations
-
+  y <- st_transform(y, crs(x))
 
   # try to extract
-  extract1 <- extract(r, points, cellnumbers = TRUE) %>% as_tibble
+  ext1 <- raster::extract(x, y, cellnumbers = TRUE) %>% as_tibble
 
-  points <- points %>% mutate(cells = extract1$cells,
-                              extr_val = extract1[[2]],
-                              dist = 0)
+  y <- y %>% mutate(cells = ext1$cells,
+                    value = ext1[[2]])
 
   # subset NAs
-  missing_values <- points %>% filter(is.na(extr_val))
+  miss_y <- y %>% filter(is.na(value))
 
-  extract_miss <- map_dfr(seq_len(nrow(missing_values)),
-                          ~ nearest_value(r, missing_values[.x,], max_range))
+  if (nrow(miss_y) == 0) {
+    ym <- ext1[[2]]
 
-  missing_values <- missing_values %>% bind_cols(extract_miss)
+  } else {
+    # extract_nearest_value point by point
+    ext_miss <- map_dfr(seq_len(nrow(miss_y)),
+                        ~ extract_nearest_value(x, miss_y[.x,], max_range))
 
+    miss_y <- miss_y %>% bind_cols(ext_miss) %>% st_drop_geometry %>%
+      select(uni_enl, value = near_val)
 
-  # extract_nearest_value
+    # merge with original dataset
+    ym <- y %>% filter(!is.na(value)) %>% st_drop_geometry %>%
+      select(uni_enl, value) %>% bind_rows(miss_y) %>% arrange(uni_enl) %>% pull(value)
 
+  }
 
-
-  # # merge with original dataset
-  # stgeo <- st_geometry(points)
-  # points <- points %>% st_drop_geometry()
-  #
-  # points[is.na(points$extr_val), c("extr_val", "dist")] <-
-  #   missing_values[c("sampl_val", "dist_cell")] %>% st_drop_geometry()
-  #
-  # points %>% select(-c(cells)) %>% st_set_geometry(stgeo)
-  #
-
+  # Or should it return a df with names(x)?
+  ym
 
 }
-
-
 
 
 
@@ -106,15 +118,18 @@ extract_nearest_layer <- function(x, y, max_range = NULL) {
 #'
 #' @examples
 extract_nearest_value <- function(x, point, max_range = NULL) {
-  # point <- missing_values[1,]
+  # point <- miss_uni[1,]
 
   # buffer_values
   # alternative could be to fix points around (probably faster), but
   # extract does fancy stuff with buffer distance if lonlat
   # could also just count cells on each side, would then use a cell_dist argument
 
+  # moved to layer
+  # point <- st_transform(point, crs(x))
+
   buff_vals0 <- raster::extract(x, point, buffer = max_range,
-                                cellnumbers = TRUE) %>% .[[1]]
+                                cellnumbers = TRUE, small = TRUE) %>% .[[1]]
 
   if (class(buff_vals0) == "numeric") {
     buff_vals <- data.frame(as.list(buff_vals0))
@@ -123,24 +138,24 @@ extract_nearest_value <- function(x, point, max_range = NULL) {
   }
 
   # subset raster
-  r_sub <- rasterFromCells(r, buff_vals$cell)
-  #plot(r_sub)
-
-  r_sub[] <- r[values(r_sub)]
-  #plot(r_sub)
+  x_sub <- rasterFromCells(x, buff_vals$cell)
+  x_sub[] <- x[values(x_sub)]
+  #plot(x_sub)
 
   # distance matrix
-
-  point <- st_transform(point, crs(r_sub))
-
-  dist <- replace(distanceFromPoints(r_sub, point), is.na(r_sub), NA)
+  dist <- replace(distanceFromPoints(x_sub, point), is.na(x_sub), NA)
   dist[dist > max_range] <- NA
   #plot(dist)
   #plot(point, add = T)
 
-  xyCell <- xyFromCell(dist, which.min(dist))
+  min_cell <- which.min(dist)
+  no_min <- is.na(min_cell)
 
-  data.frame(sampl_val = raster::extract(r_sub, xyCell),
+  near_val <- if (no_min) NA else {
+    raster::extract(x_sub, xyFromCell(dist, min_cell))
+  }
+
+  data.frame(near_val = near_val,
              dist_cell = minValue(dist))
 
 }
@@ -149,25 +164,28 @@ extract_nearest_value <- function(x, point, max_range = NULL) {
 
 # examples ----------------------------------------------------------------
 
-# tcomp <- readRDS(here("data_mod/2-4_tcomp_extracted.rds"))
-# points <- tcomp
+
+# examples ----------------------------------------------------------------
 #
-# rast_path <- file.path(datapath, "SoilGrids/phh2o_0-5cm_mean.tif")
-# r <- raster(rast_path)
-#
-# # example
-# df <- extract_nearest(r, points, max_range = 2000)
-
-
-#extract_nearest_value(r, point = miss1[11,], 2000)
-
-# from globcmic
 # library(raster)
 # library(tidyverse)
 # library(here)
 # library(sf)
+# library(gptools)
 #
-# cmic0 <- readRDS(here("data_mod/02-xu_cmic_v4.rds"))
+#
+# # Example 1
+# tcomp <- readRDS(here("data_mod/2-4_tcomp_extracted.rds"))
+# rast_path <- file.path(datapath, "SoilGrids/phh2o_0-5cm_mean.tif")
+# r <- raster(rast_path)
+# df <- extract_nearest(r, points, max_range = 2000)
+#
+#
+#
+# # Example 2
+# set.seed(101)
+# # y
+# cmic0 <- readRDS(here("../globcmic/data_mod/02-xu_cmic_v4.rds"))
 # cmic2 <- cmic0 %>% filter(!is.na(latitude) & !is.na(longitude)) %>%
 #   filter(between(latitude, 41.53, 59.64),
 #          between(longitude, -1.34, 23.40)) %>%
@@ -175,11 +193,28 @@ extract_nearest_value <- function(x, point, max_range = NULL) {
 #            crs = CRS("+init=epsg:4326")) %>%
 #   sample_n(150)
 #
-#   # rpath <- file.path(datapath, "sand05-crop_EU_test.tif") #file.exists(rpath)
-# rpath <- "~/Desktop/sand05-crop_EU_test.tif"
+# # x, one layer
+# rpath <- file.path("~/data/eie-group-share/GlobCmic_GP/sand05-crop_EU_test.tif")
+# # rpath <- "~/Desktop/sand05-crop_EU_test.tif"
 # file.exists(rpath)
 #
 # ras <- raster(rpath)
-# cras <- crs(ras)
 #
 # extr <- raster::extract(ras, cmic2)
+# extr2 <- extract_nearest(x = ras, y = cmic2)
+#
+# cmic3 <- cmic2 %>% mutate(new_val = extract_nearest(ras, .))
+#
+# # missing values
+# mna <- which(is.na(cmic3$new_val))
+# extr3 <- extract_nearest(x = ras, y = cmic2[mna,])
+# point <- miss_y[2,]
+#
+#
+# # using stack
+# st <- stack("~/data/eie-group-share/GlobCmic_GP/sandstack-crop_EU_test.tif")
+# ext_st <- extract_nearest(x = st, y = cmic2)
+#
+# ext_st0 <- raster::extract(x = st, y = cmic2, df = TRUE)
+#
+
