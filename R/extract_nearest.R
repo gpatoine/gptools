@@ -17,7 +17,7 @@
 extract_nearest <- function(x, y, max_range = NULL) {
 
   y0 <- y
-  y <- y %>% mutate(uni_enl = row_number()) %>% select(uni_enl)
+  y <- y %>% mutate(uni_enl = row_number()) %>% dplyr::select(uni_enl)
 
   # group same locations
   uni_loc <- y %>% dplyr::distinct(geometry, .keep_all = TRUE)
@@ -46,7 +46,7 @@ extract_nearest <- function(x, y, max_range = NULL) {
   uni_vals <- vals %>% set_names(names(x)) %>% bind_cols(st_drop_geometry(uni_loc), .) %>%
     rename(match_loc = uni_enl)
 
-  y <- left_join(st_drop_geometry(y), uni_vals, by = "match_loc") %>% select(-c(uni_enl, match_loc))
+  y <- left_join(st_drop_geometry(y), uni_vals, by = "match_loc") %>% dplyr::select(-c(uni_enl, match_loc))
 
   # return vector or df
   if (ncol(y) == 1) y[[1]] else y
@@ -90,11 +90,11 @@ extract_nearest_layer <- function(x, y, max_range = NULL) {
                         ~ extract_nearest_value(x, miss_y[.x,], max_range))
 
     miss_y <- miss_y %>% bind_cols(ext_miss) %>% st_drop_geometry %>%
-      select(uni_enl, value = near_val)
+      dplyr::select(uni_enl, value = near_val)
 
     # merge with original dataset
     ym <- y %>% filter(!is.na(value)) %>% st_drop_geometry %>%
-      select(uni_enl, value) %>% bind_rows(miss_y) %>% arrange(uni_enl) %>% pull(value)
+      dplyr::select(uni_enl, value) %>% bind_rows(miss_y) %>% arrange(uni_enl) %>% pull(value)
 
   }
 
