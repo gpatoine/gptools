@@ -37,7 +37,8 @@ extract_nearest <- function(x, y, max_range = NULL) {
 
   } else if (class(x) %in% c("RasterBrick", "RasterStack")) {
     xus <- unstack(x)
-    vals <- purrr::map_dfc(xus, ~ extract_nearest_layer(.x, y = uni_loc, max_range))
+    vals <- purrr::map_dfc(xus, ~ {cat("\n"); print(.x);
+      extract_nearest_layer(.x, y = uni_loc, max_range)})
 
   } else {
     stop("Not a Raster* object")
@@ -69,6 +70,7 @@ extract_nearest <- function(x, y, max_range = NULL) {
 #'
 #' @examples
 extract_nearest_layer <- function(x, y, max_range = NULL) {
+  # x = xus[[1]]
 
   y <- st_transform(y, crs(x))
 
@@ -86,8 +88,9 @@ extract_nearest_layer <- function(x, y, max_range = NULL) {
 
   } else {
     # extract_nearest_value point by point
+    message("Looking for ", nrow(miss_y), " missing values\n")
     ext_miss <- map_dfr(seq_len(nrow(miss_y)),
-                        ~ extract_nearest_value(x, miss_y[.x,], max_range))
+                        ~ {cat(.x, "- "); extract_nearest_value(x, miss_y[.x,], max_range)})
 
     miss_y <- miss_y %>% bind_cols(ext_miss) %>% st_drop_geometry %>%
       dplyr::select(uni_enl, value = near_val)
@@ -118,51 +121,52 @@ extract_nearest_layer <- function(x, y, max_range = NULL) {
 #'
 #' @examples
 extract_nearest_value <- function(x, point, max_range = NULL) {
-  # point <- miss_uni[1,]
+  # point <- miss_y[1,]
 
   # buffer_values
   # alternative could be to fix points around (probably faster), but
   # extract does fancy stuff with buffer distance if lonlat
   # could also just count cells on each side, would then use a cell_dist argument
 
-  # moved to layer
-  # point <- st_transform(point, crs(x))
+  # point = miss_y[1,]
 
   buff_vals0 <- raster::extract(x, point, buffer = max_range,
                                 cellnumbers = TRUE, small = TRUE) %>% .[[1]]
 
-  if (class(buff_vals0) == "numeric") {
-    buff_vals <- data.frame(as.list(buff_vals0))
+  if(is.na(buff_vals0)) {
+    data.frame(near_val = NA,
+               dist_cell = NA)
+
   } else {
-    buff_vals <- as.data.frame(buff_vals0)
-  }
+    if (class(buff_vals0) == "numeric") {
+      buff_vals <- data.frame(as.list(buff_vals0))
+    } else {
+      buff_vals <- as.data.frame(buff_vals0)
+    }
 
-  # subset raster
-  x_sub <- rasterFromCells(x, buff_vals$cell)
-  x_sub[] <- x[values(x_sub)]
-  #plot(x_sub)
+    # subset raster
+    x_sub <- rasterFromCells(x, buff_vals$cell)
+    x_sub[] <- x[values(x_sub)]
+    #plot(x_sub)
 
-  # distance matrix
-  dist <- replace(distanceFromPoints(x_sub, point), is.na(x_sub), NA)
-  dist[dist > max_range] <- NA
-  #plot(dist)
-  #plot(point, add = T)
+    # distance matrix
+    dist <- replace(distanceFromPoints(x_sub, point), is.na(x_sub), NA)
+    dist[dist > max_range] <- NA
+    #plot(dist)
+    #plot(point, add = T)
 
-  min_cell <- which.min(dist)
-  no_min <- is.na(min_cell)
+    min_cell <- raster::which.min(dist)
+    no_min <- is.na(min_cell)
 
-  near_val <- if (no_min) NA else {
-    raster::extract(x_sub, xyFromCell(dist, min_cell))
-  }
+    near_val <- if (no_min) NA else {
+      raster::extract(x_sub, xyFromCell(dist, min_cell))
+    }
 
-  data.frame(near_val = near_val,
-             dist_cell = minValue(dist))
+    data.frame(near_val = near_val,
+               dist_cell = minValue(dist))
+    }
 
 }
-
-
-
-# examples ----------------------------------------------------------------
 
 
 # examples ----------------------------------------------------------------
@@ -179,7 +183,6 @@ extract_nearest_value <- function(x, point, max_range = NULL) {
 # rast_path <- file.path(datapath, "SoilGrids/phh2o_0-5cm_mean.tif")
 # r <- raster(rast_path)
 # df <- extract_nearest(r, points, max_range = 2000)
-#
 #
 #
 # # Example 2
@@ -213,8 +216,8 @@ extract_nearest_value <- function(x, point, max_range = NULL) {
 #
 # # using stack
 # st <- stack("~/data/eie-group-share/GlobCmic_GP/sandstack-crop_EU_test.tif")
-# ext_st <- extract_nearest(x = st, y = cmic2)
+# ext_st <- extract_nearest(x = st, y = cmic2 %>% sample_frac(0.25))
 #
 # ext_st0 <- raster::extract(x = st, y = cmic2, df = TRUE)
-#
+
 

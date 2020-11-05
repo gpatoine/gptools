@@ -11,11 +11,11 @@ LazyData: true
 Depends:
   tidyverse,
   tools,
-  gsubfn,
   sf,
   raster
 Suggests:
   leaflet,
   rio,
-  sqldf
+  sqldf,
+  gsubfn
 RoxygenNote: 7.1.1
