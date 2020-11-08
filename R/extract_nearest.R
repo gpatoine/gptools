@@ -11,10 +11,11 @@
 #' @param x Raster* object
 #' @param y points represented by a sf object
 #' @param max_range numeric maximum distance in meters. Default is 5 x res
+#' @param .as_na vector of values to be ignored (considered as NA) in the Raster*
 #'
 #' @return A vector for RasterLayer objects, and a matrix for RasterStack or RasterBrick objects.
 #' @export
-extract_nearest <- function(x, y, max_range = NULL) {
+extract_nearest <- function(x, y, max_range = NULL, .as_na = NULL) {
 
   y0 <- y
   y <- y %>% mutate(uni_enl = row_number()) %>% dplyr::select(uni_enl)
@@ -32,13 +33,13 @@ extract_nearest <- function(x, y, max_range = NULL) {
 
   # dispatch depending n layers
   if (class(x) == "RasterLayer") {
-    vals <- extract_nearest_layer(x, y = uni_loc, max_range)
+    vals <- extract_nearest_layer(x, y = uni_loc, max_range, .as_na)
     vals <- data.frame(vals)
 
   } else if (class(x) %in% c("RasterBrick", "RasterStack")) {
     xus <- unstack(x)
     vals <- purrr::map_dfc(xus, ~ {cat("\n"); print(.x);
-      extract_nearest_layer(.x, y = uni_loc, max_range)})
+      extract_nearest_layer(.x, y = uni_loc, max_range, .as_na)})
 
   } else {
     stop("Not a Raster* object")
@@ -64,12 +65,13 @@ extract_nearest <- function(x, y, max_range = NULL) {
 #' @param x RasterLayer
 #' @param y points represented by a sf object
 #' @param max_range numeric maximum distance in meters
+#' @param .as_na vector of values to be ignored (considered as NA) in the Raster*
 #'
 #' @return vector of values
 #' @export
 #'
 #' @examples
-extract_nearest_layer <- function(x, y, max_range = NULL) {
+extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
   # x = xus[[1]]
 
   y <- st_transform(y, crs(x))
@@ -90,7 +92,7 @@ extract_nearest_layer <- function(x, y, max_range = NULL) {
     # extract_nearest_value point by point
     message("Looking for ", nrow(miss_y), " missing values\n")
     ext_miss <- map_dfr(seq_len(nrow(miss_y)),
-                        ~ {cat(.x, "- "); extract_nearest_value(x, miss_y[.x,], max_range)})
+                        ~ {cat(.x, "- "); extract_nearest_value(x, miss_y[.x,], max_range, .as_na)})
 
     miss_y <- miss_y %>% bind_cols(ext_miss) %>% st_drop_geometry %>%
       dplyr::select(uni_enl, value = near_val)
@@ -114,13 +116,14 @@ extract_nearest_layer <- function(x, y, max_range = NULL) {
 #'
 #' @param x RasterLayer
 #' @param point single sf object created by subsetting a single row from sf df.
-#' @param max_range
+#' @param max_range numeric maximum distance in meters
+#' @param .as_na vector of values to be ignored (considered as NA) in the Raster*
 #'
 #' @return data.frame with extract value and distance from cell
 #' @export
 #'
 #' @examples
-extract_nearest_value <- function(x, point, max_range = NULL) {
+extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
   # point <- miss_y[1,]
 
   # buffer_values
@@ -147,7 +150,14 @@ extract_nearest_value <- function(x, point, max_range = NULL) {
     # subset raster
     x_sub <- rasterFromCells(x, buff_vals$cell)
     x_sub[] <- x[values(x_sub)]
+
+
+    # remove .as_na values
+    if (!is.null(.as_na)) {
+      x_sub[x_sub %in% .as_na] <- NA
+    }
     #plot(x_sub)
+
 
     # distance matrix
     dist <- replace(distanceFromPoints(x_sub, point), is.na(x_sub), NA)
