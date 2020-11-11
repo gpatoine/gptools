@@ -4,14 +4,16 @@
 \alias{extract_nearest_value}
 \title{Extract nearest value for single point}
 \usage{
-extract_nearest_value(x, point, max_range = NULL)
+extract_nearest_value(x, point, max_range = NULL, .as_na = NULL)
 }
 \arguments{
 \item{x}{RasterLayer}
 
 \item{point}{single sf object created by subsetting a single row from sf df.}
 
-\item{max_range}{}
+\item{max_range}{numeric maximum distance in meters}
+
+\item{.as_na}{vector of values to be ignored (considered as NA) in the Raster*}
 }
 \value{
 data.frame with extract value and distance from cell

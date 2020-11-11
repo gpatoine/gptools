@@ -4,7 +4,7 @@
 \alias{extract_nearest}
 \title{Extract from nearest available pixel}
 \usage{
-extract_nearest(x, y, max_range = NULL)
+extract_nearest(x, y, max_range = NULL, .as_na = NULL)
 }
 \arguments{
 \item{x}{Raster* object}
@@ -12,6 +12,8 @@ extract_nearest(x, y, max_range = NULL)
 \item{y}{points represented by a sf object}
 
 \item{max_range}{numeric maximum distance in meters. Default is 5 x res}
+
+\item{.as_na}{vector of values to be ignored (considered as NA) in the Raster*}
 }
 \value{
 A vector for RasterLayer objects, and a matrix for RasterStack or RasterBrick objects.

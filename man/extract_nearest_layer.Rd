@@ -4,7 +4,7 @@
 \alias{extract_nearest_layer}
 \title{Extract nearest for RasterLayer}
 \usage{
-extract_nearest_layer(x, y, max_range = NULL)
+extract_nearest_layer(x, y, max_range = NULL, .as_na = NULL)
 }
 \arguments{
 \item{x}{RasterLayer}
@@ -12,6 +12,8 @@ extract_nearest_layer(x, y, max_range = NULL)
 \item{y}{points represented by a sf object}
 
 \item{max_range}{numeric maximum distance in meters}
+
+\item{.as_na}{vector of values to be ignored (considered as NA) in the Raster*}
 }
 \value{
 vector of values

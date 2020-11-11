@@ -73,6 +73,13 @@ extract_nearest <- function(x, y, max_range = NULL, .as_na = NULL) {
 #' @examples
 extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
   # x = xus[[1]]
+  # y = uni_loc
+
+  # todebug: plot locations
+  # world <- rnaturalearth::ne_countries(returnclass = "sf")
+  # ggplot()+
+  #   geom_sf(data = world) +
+  #   geom_sf(data = y, col = "red")
 
   y <- st_transform(y, crs(x))
 
@@ -82,8 +89,20 @@ extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
   y <- y %>% mutate(cells = ext1$cells,
                     value = ext1[[2]])
 
+  # remove as_na values
+  if (!is.null(.as_na)) {
+    y$value[y$value %in% .as_na] <- NA
+  }
+
   # subset NAs
   miss_y <- y %>% filter(is.na(value))
+
+  # todebug: plot locations
+  # world <- rnaturalearth::ne_countries(returnclass = "sf")
+  # world_proj <- st_transform(world, crs(x))
+  # ggplot()+
+  #   geom_sf(data = world_proj) +
+  #   geom_sf(data = miss_y, col = "red")
 
   if (nrow(miss_y) == 0) {
     ym <- ext1[[2]]
@@ -91,6 +110,7 @@ extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
   } else {
     # extract_nearest_value point by point
     message("Looking for ", nrow(miss_y), " missing values\n")
+
     ext_miss <- map_dfr(seq_len(nrow(miss_y)),
                         ~ {cat(.x, "- "); extract_nearest_value(x, miss_y[.x,], max_range, .as_na)})
 
@@ -124,59 +144,67 @@ extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
 #'
 #' @examples
 extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
-  # point <- miss_y[1,]
+  # point <- miss_y[2,]
 
   # buffer_values
   # alternative could be to fix points around (probably faster), but
   # extract does fancy stuff with buffer distance if lonlat
   # could also just count cells on each side, would then use a cell_dist argument
 
-  # point = miss_y[1,]
-
   buff_vals0 <- raster::extract(x, point, buffer = max_range,
                                 cellnumbers = TRUE, small = TRUE) %>% .[[1]]
 
-  if(is.na(buff_vals0)) {
+  if(length(buff_vals0) == 1 && is.na(buff_vals0)) {
     data.frame(near_val = NA,
                dist_cell = NA)
-
   } else {
     if (class(buff_vals0) == "numeric") {
       buff_vals <- data.frame(as.list(buff_vals0))
     } else {
       buff_vals <- as.data.frame(buff_vals0)
     }
+  }
 
-    # subset raster
-    x_sub <- rasterFromCells(x, buff_vals$cell)
-    x_sub[] <- x[values(x_sub)]
+  # subset raster
+  x_sub <- rasterFromCells(x, buff_vals$cell)
+  x_sub[] <- x[values(x_sub)]
+
+  # remove .as_na values
+  if (!is.null(.as_na)) {
+    na_df <- data.frame(id = .as_na, value = NA)
+    x_sub <- subs(x_sub, na_df, subsWithNA=FALSE)
+  }
+  # plot(x_sub)
+
+  # distance matrix
+  dist <- replace(distanceFromPoints(x_sub, point), is.na(x_sub), NA)
+  dist[dist > max_range] <- NA
+  #plot(dist)
+  #plot(point, add = T)
+
+  min_cell <- raster::which.min(dist) %>% sample(1) # if many mins, pick one
+
+  # just for a nice plot
+  # x_subp <- x_sub
+  # x_subp[is.na(dist)] <- NA
+  # plot(x_subp)
+  # plot(point, add = T)
+  # # points(xyFromCell(x_subp, min_cell), col = "red")
+  # posp <- xyFromCell(x_subp, min_cell)
+  # polygon(x = c(rep(posp[1]-res(x_subp)[1]/2, 2), rep(posp[1]+res(x_subp)[1]/2, 2)),
+  #         y = c(posp[2]-res(x_subp)[2]/2, rep(posp[2]+res(x_subp)[2]/2, 2), posp[2]-res(x_subp)[2]/2), border = "red", )
 
 
-    # remove .as_na values
-    if (!is.null(.as_na)) {
-      x_sub[x_sub %in% .as_na] <- NA
-    }
-    #plot(x_sub)
+  no_min <- is.na(min_cell)
 
+  near_val <- if (no_min) NA else {
+    raster::extract(x_sub, xyFromCell(dist, min_cell))
+  }
 
-    # distance matrix
-    dist <- replace(distanceFromPoints(x_sub, point), is.na(x_sub), NA)
-    dist[dist > max_range] <- NA
-    #plot(dist)
-    #plot(point, add = T)
-
-    min_cell <- raster::which.min(dist)
-    no_min <- is.na(min_cell)
-
-    near_val <- if (no_min) NA else {
-      raster::extract(x_sub, xyFromCell(dist, min_cell))
-    }
-
-    data.frame(near_val = near_val,
-               dist_cell = minValue(dist))
-    }
-
+  data.frame(near_val = near_val,
+             dist_cell = minValue(dist))
 }
+
 
 
 # examples ----------------------------------------------------------------
