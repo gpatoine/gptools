@@ -17,5 +17,6 @@ Suggests:
   leaflet,
   rio,
   sqldf,
-  gsubfn
+  gsubfn,
+  DiagrammeR
 RoxygenNote: 7.1.1

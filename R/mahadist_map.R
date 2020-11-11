@@ -1,5 +1,44 @@
+
+
+
+#' Make grid
+#'
+#' Specific use in spatial model predictions and mahalanobis analysis.
+#'
+#' @param reso in degree
+#'
+#' @return
+#' @export
+#'
+#' @examples
+make_grid <- function(reso){
+  # could also use tidyr::crossing
+  tibble(X_from = seq(-180, 180 - reso, by = reso) %>% rep(180 / reso),
+         X_to =seq(-180 + reso, 180, by = reso) %>% rep(180 / reso),
+         Y_from = seq(-90, 90 - reso, by = reso) %>% rep(each = 360 / reso),
+         Y_to = seq(-90 + reso, 90, by = reso) %>% rep(each = 360 / reso),
+         X_mid = X_from + reso / 2,
+         Y_mid = Y_from + reso / 2) %>%
+    sf::st_as_sf(coords = c("X_mid", "Y_mid"), remove = FALSE,
+                 crs = CRS("+init=epsg:4326"))
+}
+
+
+
+#' Calculate mahalanobis distance
+#'
+#' @param dat
+#' @param world
+#' @param vars
+#' @param xy
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mahadist <- function (dat, world, vars, xy = c("X", "Y")){
   #check names in both df, stop if not
+
   if(all(c(vars %in% names(dat), vars %in% names(world)))){
     dat_sub <- dat %>% dplyr::select(all_of(vars)) %>%
       drop_na
@@ -39,6 +78,12 @@ mahadist <- function (dat, world, vars, xy = c("X", "Y")){
 
 #https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html
 
+#' Load spatial libraries
+#'
+#' @return
+#' @export
+#'
+#' @examples
 splibs <- function(){
   library(ggplot2)
   theme_set(theme_bw())
@@ -48,6 +93,15 @@ splibs <- function(){
 
 }
 
+#' Make a mahalanobis map
+#'
+#' @param dat
+#' @param xy
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mahamap <- function (dat, xy = c("X", "Y")){
   splibs()
   worldmap <- ne_countries(scale = "medium", returnclass = "sf")
@@ -67,6 +121,18 @@ mahamap <- function (dat, xy = c("X", "Y")){
 #   scale_fill_manual(values=c("green", "orange", "red"))
 
 
+#' Variant of mahalanobis map
+#'
+#' Uses gradient
+#'
+#' @param dat
+#' @param xy
+#' @param mask
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mahagrad <- function (dat, xy = c("X", "Y"), mask = F){
   splibs()
   worldmap <- ne_countries(scale = "medium", returnclass = "sf")
@@ -89,6 +155,15 @@ mahagrad <- function (dat, xy = c("X", "Y"), mask = F){
 }
 
 
+#' Maha+mask
+#'
+#' @param dat
+#' @param xy
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mahamask <- function (dat, xy = c("X", "Y")){
   splibs()
   worldmap <- ne_countries(scale = "medium", returnclass = "sf")
