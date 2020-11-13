@@ -9,10 +9,11 @@ License: Dunno
 Encoding: UTF-8
 LazyData: true
 Depends:
-  tidyverse,
+  raster,
   tools,
   sf,
-  raster
+  tidyverse,
+  here
 Suggests:
   leaflet,
   rio,
