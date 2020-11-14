@@ -43,3 +43,27 @@ last_tmst <- function(fold, pattern) {
 }
 
 
+
+#' List timestamped
+#'
+#' List timestamped files fitting a pattern with parsed date.
+#'
+#' @param fold path
+#' @param pattern pattern passed to list.files
+#'
+#' @return
+#' @export
+#'
+#' @examples
+list_tmst <- function(fold, pattern = ".", recursive = FALSE) {
+
+  files <- list.files(fold, pattern = pattern, recursive = recursive)
+  stamps <- lubridate::ymd_hms(stringr::str_extract(files, "\\d{14}"))
+  dplyr::arrange(tibble(files, stamps), stamps) %>% print(n = 30)
+
+}
+
+# examples
+# list_tmst("~/Documents/Projects_local/globcmic/data_mod")
+# list_tmst("~/Documents/Projects_local/globcmic/data_mod", "04-cmic_extracts_grouped_sf_c")
+# list_tmst("~/Documents/Projects_local/globcmic/data_mod", "extr", recursive = T)
