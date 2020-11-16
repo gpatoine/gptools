@@ -10,7 +10,7 @@
 #' Initialize file: Use on an existing file to track and create to repository folder.
 #'
 #' @param file The file of interest
-#' @param fold_path The folder location for the archD
+#' @param fold_path The folder location for the data archive
 #'
 #' @return Nothing
 #' @export
@@ -54,14 +54,14 @@ ad_init <- function(file, fold_path = default_fold(file)){
 #' Save a timestamped file of the MRV, useful for manual edits
 #'
 #' @param file The file of interest
-#' @param fold_path The folder location for the archD
+#' @param fold_path The folder location for the data archive
 #'
 #' @return nothing
 #' @export
 ad_archive <- function(file, fold_path = default_fold(file)){
   # check repo
   if(!dir.exists(fold_path)){
-    stop("No ArchD repo. Use ad_init() to create one.")
+    stop("No archD repo. Use ad_init() to create one.")
   }
 
   if(suppressMessages(ad_to_date(file, fold_path))){
@@ -70,7 +70,7 @@ ad_archive <- function(file, fold_path = default_fold(file)){
     # create timestamped version
     ts_path <- mk_timestamp(file.path(fold_path, basename(file)))
     if(file.copy(file, ts_path)){
-      message("Success: File ArchDed")
+      message("Success: File archDed")
 
       update_log(file, fold_path, method = "ad_archive")
 
@@ -90,7 +90,7 @@ ad_archive <- function(file, fold_path = default_fold(file)){
 #'
 #' @param x
 #' @param file The file of interest
-#' @param fold_path The folder location for the archD
+#' @param fold_path The folder location for the data archive
 #'
 #' @return nothing
 #' @export
@@ -122,7 +122,7 @@ ad_save <- function(x, file, fold_path = default_fold(file)){
 #' LSV: last saved version in the archd repo
 #'
 #' @param file The file of interest
-#' @param fold_path The folder location for the archD
+#' @param fold_path The folder location for the data archive
 #'
 #' @return nothing
 #' @export
@@ -178,15 +178,15 @@ ad_lsv <- function(file, fold_path = default_fold(file), look_back = 0){
 
 #' default_fold
 #'
-#' suggested folder to create the archive. Default option is to have an "archD" repo in the project folder with a mirrored folder structure.
+#' suggested folder to create the archive. Default option is to have an "archd" repo in the project folder with a mirrored folder structure.
 #'
 #' @param file The file of interest
 #'
-#' @return default archD repo path
+#' @return default archd repo path
 #' @export
 default_fold <- function(file) {
   file.path(here::here(),
-            paste0("archD",
+            paste0("archd",
                    tools::file_path_sans_ext(str_remove(file, paste0(here::here()))),
                    "_",
                    tools::file_ext(file)

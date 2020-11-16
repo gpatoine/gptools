@@ -45,6 +45,7 @@ extract_nearest <- function(x, y, max_range = NULL, .as_na = NULL) {
     stop("Not a Raster* object")
   }
 
+  # TODO check is warning New name ..1 is from here, FIXME
   uni_vals <- vals %>% set_names(names(x)) %>% bind_cols(st_drop_geometry(uni_loc), .) %>%
     rename(match_loc = uni_enl)
 
