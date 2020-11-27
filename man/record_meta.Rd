@@ -4,12 +4,14 @@
 \alias{record_meta}
 \title{Record metadata}
 \usage{
-record_meta(x, file, obj_name = NULL)
+record_meta(x, file, comment = NULL, obj_name = NULL)
 }
 \arguments{
 \item{x}{Object to save}
 
 \item{file}{character Path to save file}
+
+\item{comment}{character}
 
 \item{obj_name}{only used if called internally}
 }

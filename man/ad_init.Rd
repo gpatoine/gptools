@@ -9,7 +9,7 @@ ad_init(file, fold_path = default_fold(file))
 \arguments{
 \item{file}{The file of interest}
 
-\item{fold_path}{The folder location for the archD}
+\item{fold_path}{The folder location for the data archive}
 }
 \value{
 Nothing

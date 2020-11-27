@@ -14,8 +14,6 @@
 #'
 #' @return character squishes timestamp
 #' @export
-#'
-#' @examples
 tmst <- function(time = T) {
   if (time) {
     format(Sys.time(), "%Y%m%d%H%M%S")
@@ -33,8 +31,6 @@ tmst <- function(time = T) {
 #'
 #' @return R object read from RDS file
 #' @export
-#'
-#' @examples
 last_tmst <- function(fold, pattern) {
   files <- list.files(fold, pattern = pattern, full.names = TRUE)
   file <- files %>% sort(TRUE) %>% .[1]
@@ -53,8 +49,6 @@ last_tmst <- function(fold, pattern) {
 #'
 #' @return
 #' @export
-#'
-#' @examples
 list_tmst <- function(fold, pattern = ".", recursive = FALSE) {
 
   files <- list.files(fold, pattern = pattern, recursive = recursive)

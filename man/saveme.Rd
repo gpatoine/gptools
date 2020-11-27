@@ -4,12 +4,14 @@
 \alias{saveme}
 \title{Save metadata}
 \usage{
-saveme(x, file, FUN = saveRDS, ...)
+saveme(x, file, comment = NULL, FUN = saveRDS, ...)
 }
 \arguments{
 \item{x}{Object to save}
 
 \item{file}{character Path to save file}
+
+\item{comment}{character}
 
 \item{FUN}{function used for saving. Default is saveRDS.}
 

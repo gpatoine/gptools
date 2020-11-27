@@ -10,8 +10,8 @@ default_fold(file)
 \item{file}{The file of interest}
 }
 \value{
-default archD repo path
+default archd repo path
 }
 \description{
-suggested folder to create the archive. Default option is to have an "archD" repo in the project folder with a mirrored folder structure.
+suggested folder to create the archive. Default option is to have an "archd" repo in the project folder with a mirrored folder structure.
 }

@@ -213,3 +213,49 @@
 # map_dfr(seq_len(nrow(missing_values)),
 #         ~ nearest_value(r, missing_values[.x,], max_range))
 #
+#
+# as.data.frame %>% extract approach --------------------------------------
+# used with buffer
+# results are not exactly the same, but very close (see globcmic journal)
+#
+# 2. option: with as.data.frame %>%  extract
+# also nice, doesn't seem faster
+#
+# system.time({
+#
+#   ptt <- st_transform(point, crs(x))
+#
+#   buff_vals <- buff_vals %>% cbind(xyFromCell(x, buff_vals$cell))
+#   # plot(buff_vals %>% select(x, y)) #circle
+#
+#   # xyFromCell(x, buff_vals$cell) %>% data.frame %>% st_as_sf(coords = c("x", "y"), crs = crs(x)) %>% plot() #circle
+#
+#   # subset raster
+#   x_sub <- rasterFromCells(x, buff_vals$cell)
+#   x_sub[] <- x[values(x_sub)]
+#   plot(x_sub)
+#
+#   points(buff_vals %>% select(x, y))
+#
+#
+#   xs2 <- buff_vals %>% st_as_sf(coords = c("x", "y"), crs = crs(x), remove = FALSE) %>%
+#     mutate(dist = st_distance(., ptt),
+#            lc = raster::extract(lc, .)) %>%
+#     filter(lc == 70) #### TODO change to variable
+#
+# })
+#
+# # compare
+#
+# plot(values)
+# plot(density(values))
+# plot(sort(values))
+#
+# xs2$value %>% sort %>% plot
+# plot(density(xs2$value))
+# xs2$value %>% density %>% plot
+# values %>% density %>% plot
+#
+# values %>% density %>% lines(add = T)
+#
+# plot(xs2["value"])

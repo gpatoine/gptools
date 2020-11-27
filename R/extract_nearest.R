@@ -185,7 +185,7 @@ extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
 
   # if many mins, pick one
   min_cells <- raster::which.min(dist)
-  min_cell <- min_cells[sample.int(length(min_cells), 1)]
+  min_cell <- min_cells[sample.int(length(min_cells))]
 
   # just for a nice plot
   # x_subp <- x_sub

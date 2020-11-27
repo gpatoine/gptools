@@ -3,6 +3,7 @@
 # author: Guillaume Patoine <guillaume.patoine@idiv.de>
 #purpose: Save with added metadata. Mostly useful for data, but potentially relevant for figures and such
 
+# NOTE: any reason to keep these separated? Why not just one function?
 
 
 #' Save metadata
@@ -14,19 +15,18 @@
 #'
 #' @param x Object to save
 #' @param file character Path to save file
+#' @param comment character
 #' @param FUN function used for saving. Default is saveRDS.
 #' @param ... additional arguments passed to FUN
 #'
 #' @return
 #' @export
-#'
-#' @examples
-saveme <- function(x, file, FUN = saveRDS, ...) {
+saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) {
 
   obj_name <- deparse(match.call()$x)
 
   # do the thing to save metadata
-  record_meta(x, file, obj_name)
+  record_meta(x, file, comment, obj_name)
 
   # TODO add functionality for ggsave
 
@@ -42,15 +42,26 @@ saveme <- function(x, file, FUN = saveRDS, ...) {
 #'
 #' @param x Object to save
 #' @param file character Path to save file
+#' @param comment character
 #' @param obj_name only used if called internally
 #'
 #' @return
 #' @export
-#'
-#' @examples
-record_meta <- function(x, file, obj_name = NULL) {
+record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 
   if (is.null(obj_name)) obj_name <- deparse(match.call()$x)
+
+  # adjust comment
+  if (is.null(comment)) {
+    if (interactive()) {
+      comment <- rstudioapi::showPrompt("File metadata", "Comment:")
+
+    } else {
+      comment <- "non-interactive session"
+
+    }
+  }
+
 
   tib <- tibble(
     date = Sys.Date(),
@@ -59,7 +70,7 @@ record_meta <- function(x, file, obj_name = NULL) {
     source = rstudioapi::getActiveDocumentContext()$path,
     object_name = obj_name,
     object_class = toString(class(x)),
-    description = rstudioapi::showPrompt("File metadata", "Comment:")
+    description = comment
   )
 
   # write to csv
