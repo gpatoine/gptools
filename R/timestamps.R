@@ -28,14 +28,20 @@ tmst <- function(time = T) {
 #'
 #' @param fold
 #' @param pattern
+#' @param load logical wanna load to file or just get it's name
 #'
 #' @return R object read from RDS file
 #' @export
-last_tmst <- function(fold, pattern) {
+last_tmst <- function(fold, pattern, load = TRUE) {
   files <- list.files(fold, pattern = pattern, full.names = TRUE)
   file <- files %>% sort(TRUE) %>% .[1]
-  message("Reading ", basename(file))
-  readRDS(file)
+
+  if (load) {
+    message("Reading ", basename(file))
+    readRDS(file)
+
+  }  else file
+
 }
 
 
