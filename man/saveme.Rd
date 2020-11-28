@@ -25,5 +25,5 @@ Wrapper function that saves an object using FUN and related metadata.
 Supported functions include saveRDS(), write_csv() and write_excel_csv().
 }
 \details{
-Doesn't currently work with ggsave.
+Use ggsaveme() for ggplot objects.
 }

@@ -11,7 +11,7 @@
 #' Wrapper function that saves an object using FUN and related metadata.
 #' Supported functions include saveRDS(), write_csv() and write_excel_csv().
 #'
-#' Doesn't currently work with ggsave.
+#' Use ggsaveme() for ggplot objects.
 #'
 #' @param x Object to save
 #' @param file character Path to save file
@@ -36,9 +36,37 @@ saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) {
 
 
 
+#' GGsave metadata
+#'
+#' @param filename character Path to save file
+#' @param plot Object to save. Last plot if unspecified
+#' @param comment character
+#' @param ... additional arguments passed to ggsave
+#'
+#' @return
+#' @export
+ggsaveme <- function(filename, plot = NULL, comment = NULL,...) {
+
+  if (is.null(plot)) {
+    obj_name <- "NA"
+    plot <- last_plot()
+  } else {
+    obj_name <- deparse(match.call()$plot)
+  }
+
+  record_meta(x = plot, filename, comment, obj_name)
+
+  ggsave(filename, plot, ...)
+
+}
+
+
+
 #' Record metadata
 #'
 #' Writes metadata to CSV file located in archd project folder. Tracks changes.
+#'
+#' Only works from Rstudio
 #'
 #' @param x Object to save
 #' @param file character Path to save file
@@ -48,6 +76,11 @@ saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) {
 #' @return
 #' @export
 record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
+
+  # TODO add options if not from Rstudio
+  # rstudioapi::isAvailable()
+  # or Sys.getenv("RSTUDIO", unset = NA)
+
 
   if (is.null(obj_name)) obj_name <- deparse(match.call()$x)
 
@@ -62,15 +95,18 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
     }
   }
 
-
   tib <- tibble(
     date = Sys.Date(),
     time = format(Sys.time(), "%H:%M:%S"),
-    file = file,
+    basename = basename(file),
+    dirname_rel = str_remove(dirname(file), paste0("^", rstudioapi::getActiveProject(), "/")),
+    comment = comment,
     source = rstudioapi::getActiveDocumentContext()$path,
+    machine = Sys.info()["nodename"],
     object_name = obj_name,
     object_class = toString(class(x)),
-    description = comment
+    full_path = path.expand(file)
+
   )
 
   # write to csv

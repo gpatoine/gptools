@@ -21,3 +21,6 @@ record_meta(x, file, comment = NULL, obj_name = NULL)
 \description{
 Writes metadata to CSV file located in archd project folder. Tracks changes.
 }
+\details{
+Only works from Rstudio
+}
