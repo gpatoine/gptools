@@ -4,10 +4,10 @@
 \alias{last_tmst}
 \title{Read last timestamped RDS file}
 \usage{
-last_tmst(fold, pattern)
+last_tmst(fold, pattern, load = TRUE)
 }
 \arguments{
-\item{pattern}{}
+\item{load}{logical wanna load to file or just get it's name}
 }
 \value{
 R object read from RDS file

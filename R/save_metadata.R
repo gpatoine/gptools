@@ -105,6 +105,7 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
     machine = Sys.info()["nodename"],
     object_name = obj_name,
     object_class = toString(class(x)),
+    dim = if(is.data.frame(x)) toString(dim(x)) else "NA",
     full_path = path.expand(file)
 
   )

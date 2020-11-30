@@ -129,3 +129,24 @@ dputran <- function(x) {
   invisible(string)
 
 }
+
+
+
+#' File opened
+#'
+#' Check if file is available for writing
+#'
+#' @param path
+#'
+#' @return logical
+#' @export
+file.opened <- function(path) {
+  suppressWarnings(
+    "try-error" %in% class(
+      try(file(path,
+               open = "w"),
+          silent = TRUE
+      )
+    )
+  )
+}
