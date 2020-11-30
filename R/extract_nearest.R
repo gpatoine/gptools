@@ -155,16 +155,17 @@ extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
   buff_vals0 <- raster::extract(x, point, buffer = max_range,
                                 cellnumbers = TRUE, small = TRUE) %>% .[[1]]
 
-  if(length(buff_vals0) == 1 && is.na(buff_vals0)) {
-    data.frame(near_val = NA,
-               dist_cell = NA)
-  } else {
-    if (class(buff_vals0) == "numeric") {
-      buff_vals <- data.frame(as.list(buff_vals0))
+  buff_vals <-
+    if(length(buff_vals0) == 1 && is.na(buff_vals0)) {
+      data.frame(near_val = NA,
+                 dist_cell = NA)
     } else {
-      buff_vals <- as.data.frame(buff_vals0)
+      if (class(buff_vals0) == "numeric") {
+        data.frame(as.list(buff_vals0))
+      } else {
+        as.data.frame(buff_vals0)
+      }
     }
-  }
 
   # subset raster
   x_sub <- rasterFromCells(x, buff_vals$cell)
