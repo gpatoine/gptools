@@ -77,31 +77,44 @@ ggsaveme <- function(filename, plot = NULL, comment = NULL,...) {
 #' @export
 record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 
-  # TODO add options if not from Rstudio
-  # rstudioapi::isAvailable()
-  # or Sys.getenv("RSTUDIO", unset = NA)
-
+  # TODO understand why rstudioapi works from local job on local computer but not remote desktop ??? R version?
+  rstu <- rstudioapi::isAvailable()
 
   if (is.null(obj_name)) obj_name <- deparse(match.call()$x)
 
   # adjust comment
   if (is.null(comment)) {
-    if (interactive()) {
+    if (rstu) {
       comment <- rstudioapi::showPrompt("File metadata", "Comment:")
 
+    } else if (interactive()) {
+      cat("Saving file metadata. Comment: ")
+      activity <- readLines("stdin", 1)
+
     } else {
-      comment <- "non-interactive session"
+      comment <- "non-interactive"
 
     }
   }
+
+  dirname_rel = if (rstu) {
+    if (dirname(file) == rstudioapi::getActiveProject()) {
+      "project_root"
+      } else {
+        str_remove(dirname(file), paste0("^", rstudioapi::getActiveProject(), "/"))
+        }
+    } else {
+      "unknown"
+    }
+
 
   tib <- tibble(
     date = Sys.Date(),
     time = format(Sys.time(), "%H:%M:%S"),
     basename = basename(file),
-    dirname_rel = str_remove(dirname(file), paste0("^", rstudioapi::getActiveProject(), "/")),
+    dirname_rel = dirname_rel,
     comment = comment,
-    source = rstudioapi::getActiveDocumentContext()$path,
+    source = if (rstu) rstudioapi::getActiveDocumentContext()$path else "unknown",
     machine = Sys.info()["nodename"],
     object_name = obj_name,
     object_class = toString(class(x)),
@@ -111,9 +124,11 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
   )
 
   # write to csv
+  # TODO create file if it doesn't exist? where?
   write_csv(tib, here("archd/project_file_tracking.csv"), append = TRUE)
 
 }
+
 
 
 # saveme(cmic, here("data_mod/test_cmic_saveit.rds"), saveRDS)
