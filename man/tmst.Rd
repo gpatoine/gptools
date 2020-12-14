@@ -4,7 +4,7 @@
 \alias{tmst}
 \title{Timestamp}
 \usage{
-tmst(time = T)
+tmst(ext = NULL, time = T, prefix = "_c")
 }
 \arguments{
 \item{time}{logical Should time (HMS) also be included?}

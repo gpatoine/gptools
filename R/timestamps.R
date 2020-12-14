@@ -5,6 +5,7 @@
 # Only for RDS format
 
 
+# TODO rename files from old to new tmst scheme
 
 #' Timestamp
 #'
@@ -14,21 +15,30 @@
 #'
 #' @return character squishes timestamp
 #' @export
-tmst <- function(time = T) {
+tmst <- function(ext = NULL, time = T, prefix = "_c") {
+
   if (time) {
-    format(Sys.time(), "%Y%m%d%H%M%S")
+    paste0(prefix, format(Sys.time(), "%Y-%m-%d_%H%M%S"), ext)
   } else {
-    format(Sys.time(), "%Y%m%d")
+    paste0(prefix, format(Sys.time(), "%Y-%m-%d"))
   }
 }
 
+# deprec
+# tmst <- function(time = T) {
+#   if (time) {
+#     format(Sys.time(), "%Y%m%d%H%M%S")
+#   } else {
+#     format(Sys.time(), "%Y%m%d")
+#   }
+# }
 
 
 #' Read last timestamped RDS file
 #'
 #' @param fold
 #' @param pattern
-#' @param load logical wanna load to file or just get it's name
+#' @param load logical wanna load to file or just get it's name. use FALSE if the file is not rds format
 #'
 #' @return R object read from RDS file
 #' @export
@@ -45,6 +55,8 @@ last_tmst <- function(fold, pattern, load = TRUE) {
 }
 
 
+
+# TODO update to include other tmst scheme
 
 #' List timestamped
 #'
