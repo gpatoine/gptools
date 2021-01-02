@@ -56,8 +56,6 @@ last_tmst <- function(fold, pattern, load = TRUE) {
 
 
 
-# TODO update to include other tmst scheme
-
 #' List timestamped
 #'
 #' List timestamped files fitting a pattern with parsed date.
@@ -70,8 +68,20 @@ last_tmst <- function(fold, pattern, load = TRUE) {
 list_tmst <- function(fold, pattern = ".", recursive = FALSE) {
 
   files <- list.files(fold, pattern = pattern, recursive = recursive)
-  stamps <- lubridate::ymd_hms(stringr::str_extract(files, "\\d{14}"))
-  dplyr::arrange(tibble(files, stamps), stamps) %>% print(n = 30)
+
+  ind14 <- files %>% str_detect("\\d{14}")
+
+  stamps14 <- lubridate::ymd_hms(stringr::str_extract(files[ind14], "\\d{14}"))
+
+  stamps_sep <- lubridate::ymd_hms(stringr::str_extract(files[!ind14], "\\d{4}-\\d{2}-\\d{2}_\\d{6}"))
+
+  # TODO add without hms
+
+  stamps_all <- lubridate::as_datetime(NA)
+  stamps_all[ind14] <- stamps14
+  stamps_all[!ind14] <- stamps_sep
+
+  dplyr::arrange(tibble(files, stamps_all), stamps_all) %>% print(n = 30)
 
 }
 
