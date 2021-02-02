@@ -42,11 +42,11 @@ tmst <- function(ext = NULL, time = T, prefix = "_c") {
 #'
 #' @return R object read from RDS file
 #' @export
-last_tmst <- function(fold, pattern, load = TRUE) {
+last_tmst <- function(fold, pattern = "", load = TRUE) {
   files <- list.files(fold, pattern = pattern, full.names = TRUE)
   file <- files %>% sort(TRUE) %>% .[1]
 
-  if (load) {
+  if (load & tools::file_ext(file) == "rds") {
     message("Reading ", basename(file))
     readRDS(file)
 

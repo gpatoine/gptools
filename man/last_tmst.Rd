@@ -4,7 +4,7 @@
 \alias{last_tmst}
 \title{Read last timestamped RDS file}
 \usage{
-last_tmst(fold, pattern, load = TRUE)
+last_tmst(fold, pattern = "", load = TRUE)
 }
 \arguments{
 \item{load}{logical wanna load to file or just get it's name. use FALSE if the file is not rds format}
