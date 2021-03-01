@@ -77,7 +77,7 @@ ggsaveme <- function(filename, plot = NULL, comment = NULL,...) {
 #' @export
 record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 
-  # TODO understand why rstudioapi works from local job on local computer but not remote desktop ??? R version?
+  # TODO understand why rstudioapi works from local job on local computer but not on remote desktop ??? R version?
   rstu <- rstudioapi::isAvailable()
 
   if (is.null(obj_name)) obj_name <- deparse(match.call()$x)
@@ -89,12 +89,15 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 
     } else if (interactive()) {
       cat("Saving file metadata. Comment: ")
-      activity <- readLines("stdin", 1)
+      comment <- readLines("stdin", 1)
 
     } else {
       comment <- "non-interactive"
 
     }
+
+    if (is.null(comment)) comment <- "no comment" #if e.g. cancel prompt
+
   }
 
   dirname_rel = if (rstu) {
@@ -124,7 +127,7 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
   )
 
   # write to csv
-  # TODO create file if it doesn't exist? where?
+  # TODO create file if it doesn't exist, probably in main project folder
   write_csv(tib, here("archd/project_file_tracking.csv"), append = TRUE)
 
 }

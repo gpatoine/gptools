@@ -8,6 +8,9 @@ Description: A number of functions to support my work, so I don't have them all 
 License: Dunno
 Encoding: UTF-8
 LazyData: true
+Imports:
+  checkmate,
+  ggrepel
 Depends:
   raster,
   tools,
