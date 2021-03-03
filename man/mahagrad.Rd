@@ -7,10 +7,14 @@
 mahagrad(dat, xy = c("X", "Y"), mask = F)
 }
 \arguments{
-\item{mask}{}
+\item{dat}{data}
+
+\item{xy}{coordinate columns}
+
+\item{mask}{boolean}
 }
 \value{
-
+ggplot
 }
 \description{
 Uses gradient

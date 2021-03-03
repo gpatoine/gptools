@@ -7,10 +7,8 @@
 #'
 #' @param reso in degree
 #'
-#' @return
+#' @return tibble
 #' @export
-#'
-#' @examples
 make_grid <- function(reso){
   # could also use tidyr::crossing
   tibble(X_from = seq(-180, 180 - reso, by = reso) %>% rep(180 / reso),
@@ -27,15 +25,13 @@ make_grid <- function(reso){
 
 #' Calculate mahalanobis distance
 #'
-#' @param dat
-#' @param world
-#' @param vars
-#' @param xy
+#' @param dat data
+#' @param world data.frame
+#' @param vars variables used
+#' @param xy coordinate column names as character vector
 #'
-#' @return
+#' @return input data.frame with added columns
 #' @export
-#'
-#' @examples
 mahadist <- function (dat, world, vars, xy = c("X", "Y")){
   #check names in both df, stop if not
 
@@ -82,8 +78,6 @@ mahadist <- function (dat, world, vars, xy = c("X", "Y")){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 splibs <- function(){
   library(ggplot2)
   theme_set(theme_bw())
@@ -95,13 +89,11 @@ splibs <- function(){
 
 #' Make a mahalanobis map
 #'
-#' @param dat
-#' @param xy
+#' @param dat data
+#' @param xy coordinate columns
 #'
 #' @return
 #' @export
-#'
-#' @examples
 mahamap <- function (dat, xy = c("X", "Y")){
   splibs()
   worldmap <- ne_countries(scale = "medium", returnclass = "sf")
@@ -125,14 +117,12 @@ mahamap <- function (dat, xy = c("X", "Y")){
 #'
 #' Uses gradient
 #'
-#' @param dat
-#' @param xy
-#' @param mask
+#' @param dat data
+#' @param xy coordinate columns
+#' @param mask boolean
 #'
-#' @return
+#' @return ggplot
 #' @export
-#'
-#' @examples
 mahagrad <- function (dat, xy = c("X", "Y"), mask = F){
   splibs()
   worldmap <- ne_countries(scale = "medium", returnclass = "sf")
@@ -157,13 +147,11 @@ mahagrad <- function (dat, xy = c("X", "Y"), mask = F){
 
 #' Maha+mask
 #'
-#' @param dat
-#' @param xy
+#' @param dat data
+#' @param xy coordinate columns
 #'
-#' @return
+#' @return ggplot
 #' @export
-#'
-#' @examples
 mahamask <- function (dat, xy = c("X", "Y")){
   splibs()
   worldmap <- ne_countries(scale = "medium", returnclass = "sf")

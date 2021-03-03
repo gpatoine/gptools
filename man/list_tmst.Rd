@@ -12,7 +12,7 @@ list_tmst(fold, pattern = ".", recursive = FALSE)
 \item{pattern}{pattern passed to list.files}
 }
 \value{
-
+tibble
 }
 \description{
 List timestamped files fitting a pattern with parsed date.

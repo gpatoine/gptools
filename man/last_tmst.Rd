@@ -2,16 +2,21 @@
 % Please edit documentation in R/timestamps.R
 \name{last_tmst}
 \alias{last_tmst}
-\title{Read last timestamped RDS file}
+\title{Last timestamped}
 \usage{
 last_tmst(fold, pattern = "", load = TRUE)
 }
 \arguments{
+\item{fold}{folder path}
+
+\item{pattern}{regex pattern passed to list.files}
+
 \item{load}{logical wanna load to file or just get it's name. use FALSE if the file is not rds format}
 }
 \value{
 R object read from RDS file
 }
 \description{
-Read last timestamped RDS file
+Read last timestamped (RDS) file
+Default is to load file, but can return only name
 }

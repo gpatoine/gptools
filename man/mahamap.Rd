@@ -7,7 +7,9 @@
 mahamap(dat, xy = c("X", "Y"))
 }
 \arguments{
-\item{xy}{}
+\item{dat}{data}
+
+\item{xy}{coordinate columns}
 }
 \value{
 

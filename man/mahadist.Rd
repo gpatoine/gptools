@@ -7,10 +7,16 @@
 mahadist(dat, world, vars, xy = c("X", "Y"))
 }
 \arguments{
-\item{xy}{}
+\item{dat}{data}
+
+\item{world}{data.frame}
+
+\item{vars}{variables used}
+
+\item{xy}{coordinate column names as character vector}
 }
 \value{
-
+input data.frame with added columns
 }
 \description{
 Calculate mahalanobis distance

@@ -34,10 +34,13 @@ tmst <- function(ext = NULL, time = T, prefix = "_c") {
 # }
 
 
-#' Read last timestamped RDS file
+#' Last timestamped
 #'
-#' @param fold
-#' @param pattern
+#' Read last timestamped (RDS) file
+#' Default is to load file, but can return only name
+#'
+#' @param fold folder path
+#' @param pattern regex pattern passed to list.files
 #' @param load logical wanna load to file or just get it's name. use FALSE if the file is not rds format
 #'
 #' @return R object read from RDS file
@@ -63,7 +66,7 @@ last_tmst <- function(fold, pattern = "", load = TRUE) {
 #' @param fold path
 #' @param pattern pattern passed to list.files
 #'
-#' @return
+#' @return tibble
 #' @export
 list_tmst <- function(fold, pattern = ".", recursive = FALSE) {
 

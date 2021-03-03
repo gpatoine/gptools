@@ -10,7 +10,7 @@ make_grid(reso)
 \item{reso}{in degree}
 }
 \value{
-
+tibble
 }
 \description{
 Specific use in spatial model predictions and mahalanobis analysis.
