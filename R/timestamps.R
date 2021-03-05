@@ -42,12 +42,13 @@ tmst <- function(ext = NULL, time = T, prefix = "_c") {
 #' @param fold folder path
 #' @param pattern regex pattern passed to list.files
 #' @param load logical wanna load to file or just get it's name. use FALSE if the file is not rds format
+#' @param prev int previous version before last
 #'
 #' @return R object read from RDS file
 #' @export
-last_tmst <- function(fold, pattern = "", load = TRUE) {
+last_tmst <- function(fold, pattern = "", load = TRUE, prev = 0) {
   files <- list.files(fold, pattern = pattern, full.names = TRUE)
-  file <- files %>% sort(TRUE) %>% .[1]
+  file <- files %>% sort(TRUE) %>% .[1 + prev]
 
   if (load & tools::file_ext(file) == "rds") {
     message("Reading ", basename(file))

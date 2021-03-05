@@ -35,41 +35,56 @@ make_grid <- function(reso){
 mahadist <- function (dat, world, vars, xy = c("X", "Y")){
   #check names in both df, stop if not
 
-  if(all(c(vars %in% names(dat), vars %in% names(world)))){
-    dat_sub <- dat %>% dplyr::select(all_of(vars)) %>%
-      drop_na
+  stopifnot(all(c(vars %in% names(dat), vars %in% names(world))))
 
-    world_sub <- world %>% dplyr::select(all_of(xy), all_of(vars)) %>%
-      drop_na
+  dat_sub <- dat %>% dplyr::select(all_of(vars)) %>%
+    tidyr::drop_na()
 
-    world_calc <- world_sub %>% dplyr::select(-c(all_of(xy)))
 
-    message("NA values, if any, were removed.")
-
-    mu <- colMeans(dat_sub) #vector of means
-    sigma <- cov(dat_sub) #covariance matrix
-    limit97 <- qchisq(.975, df=length(dat_sub))
-    limit50 <- qchisq(.5, df=length(dat_sub))
-
-    world_calc$mahaDistance <- mahalanobis(world_calc, mu, sigma)
-    world_calc$mahatype <- "ok"
-    world_calc$mahatype[is.na(world_calc$mahaDistance)] <- NA
-    world_calc$mahatype[world_calc$mahaDistance > limit50] <- "chisq > 0.5"
-    world_calc$mahatype[world_calc$mahaDistance > limit97] <- "chisq > 0.975"
-
-    world_calc$mahatype <- factor(world_calc$mahatype, levels = c("ok", "chisq > 0.5", "chisq > 0.975"))
-
-    outliers <- length(which(world_calc$mahaDistance > limit97))
-
-    print(paste0(outliers, " outliers at 97.5% limit (", round(outliers/nrow(world_calc)*100, 2), "%)"))
-
-    world_calc <- bind_cols(world_sub %>% dplyr::select(all_of(xy)), world_calc)
-
-    return(world_calc)
-
-  } else {
-    stop("variable names not in dataframes")
+  dat_diff_nrow <- nrow(dat) - nrow(dat_sub)
+  if (dat_diff_nrow > 0) {
+    message(dat_diff_nrow, " dat entries with NA values removed")
   }
+
+  world_sub <- world %>% dplyr::select(all_of(xy), all_of(vars)) %>%
+    tidyr::drop_na()
+
+  wrld_diff_nrow <- nrow(world) - nrow(world_sub)
+  if (wrld_diff_nrow > 0) {
+    message(wrld_diff_nrow, " dat entries with NA values removed")
+  }
+
+  world_calc <- world_sub %>% dplyr::select(-c(all_of(xy)))
+
+  mu <- colMeans(dat_sub) #vector of means
+  sigma <- cov(dat_sub) #covariance matrix
+  limit97 <- qchisq(.975, df = length(dat_sub))
+  limit50 <- qchisq(.5, df = length(dat_sub))
+
+  mahaDist <- mahalanobis(world_calc, mu, sigma)
+
+  world_calc <- world_calc %>%
+    mutate(mahaDistance = mahaDist,
+           mahatype = case_when(
+             is.na(mahaDist) ~ NA_character_,
+             mahaDistance < limit50 ~ "ok",
+             mahaDistance < limit97 ~ "chisq > 0.5",
+             TRUE ~ "chisq > 0.975"
+           ))
+
+  world_calc <- world_calc %>%
+    mutate(mahatype = factor(world_calc$mahatype,
+                             levels = c("ok", "chisq > 0.5", "chisq > 0.975")))
+
+  outliers <- length(which(world_calc$mahaDistance > limit97))
+  # world_calc %>% filter(mahatype == "chisq > 0.975") %>% nrow #check
+
+  message(paste0(outliers, " outliers at 97.5% limit (", round(outliers/nrow(world_calc)*100, 2), "%)"))
+
+  world_calc <- bind_cols(world_sub %>% dplyr::select(all_of(xy)), world_calc)
+
+  return(world_calc)
+
 }
 
 #https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html

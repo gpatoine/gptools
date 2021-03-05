@@ -4,7 +4,7 @@
 \alias{last_tmst}
 \title{Last timestamped}
 \usage{
-last_tmst(fold, pattern = "", load = TRUE)
+last_tmst(fold, pattern = "", load = TRUE, prev = 0)
 }
 \arguments{
 \item{fold}{folder path}
@@ -12,6 +12,8 @@ last_tmst(fold, pattern = "", load = TRUE)
 \item{pattern}{regex pattern passed to list.files}
 
 \item{load}{logical wanna load to file or just get it's name. use FALSE if the file is not rds format}
+
+\item{prev}{int previous version before last}
 }
 \value{
 R object read from RDS file
