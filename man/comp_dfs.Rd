@@ -7,7 +7,9 @@
 comp_dfs(df1, df2)
 }
 \arguments{
-\item{df2}{}
+\item{df1}{data.frame}
+
+\item{df2}{data.frame}
 }
 \value{
 character vector of changes

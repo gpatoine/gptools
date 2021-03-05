@@ -7,6 +7,8 @@
 ad_save(x, file, fold_path = default_fold(file))
 }
 \arguments{
+\item{x}{object}
+
 \item{file}{The file of interest}
 
 \item{fold_path}{The folder location for the data archive}

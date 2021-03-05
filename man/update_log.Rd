@@ -7,7 +7,11 @@
 update_log(file, fold_path, method = NA)
 }
 \arguments{
-\item{method}{}
+\item{file}{file path}
+
+\item{fold_path}{fold}
+
+\item{method}{chr}
 }
 \value{
 

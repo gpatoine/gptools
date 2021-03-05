@@ -7,6 +7,10 @@
 ad_lsv(file, fold_path = default_fold(file), look_back = 0)
 }
 \arguments{
+\item{file}{file}
+
+\item{fold_path}{fold}
+
 \item{look_back}{positive integer. zero is the lsv, higher numbers for earlier versions}
 }
 \value{

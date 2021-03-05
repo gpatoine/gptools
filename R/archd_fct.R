@@ -88,7 +88,7 @@ ad_archive <- function(file, fold_path = default_fold(file)){
 #'
 #' Save an R object to file
 #'
-#' @param x
+#' @param x object
 #' @param file The file of interest
 #' @param fold_path The folder location for the data archive
 #'
@@ -148,8 +148,8 @@ ad_to_date <- function(file, fold_path = default_fold(file)){
 #'
 #' returns version name
 #'
-#' @param file
-#' @param fold_path
+#' @param file file
+#' @param fold_path fold
 #' @param look_back positive integer. zero is the lsv, higher numbers for earlier versions
 #'
 #' @return
@@ -221,8 +221,8 @@ mk_timestamp <- function(file) {
 
 #' same_file
 #'
-#' @param file1
-#' @param file2
+#' @param file1 chr path
+#' @param file2 chr path
 #'
 #' @return logical
 #' @export
@@ -234,8 +234,8 @@ same_file <- function(file1, file2){
 
 #' create_log
 #'
-#' @param file
-#' @param ts_path
+#' @param file chr path
+#' @param ts_path chr path
 #'
 #' @return
 #' @export
@@ -256,9 +256,9 @@ create_log <- function(file, ts_path){
 
 #' update_log
 #'
-#' @param file
-#' @param fold_path
-#' @param method
+#' @param file file path
+#' @param fold_path fold
+#' @param method chr
 #'
 #' @return
 #' @export
@@ -303,8 +303,8 @@ update_log <- function(file, fold_path, method = NA){
 
 #' comp_dfs
 #'
-#' @param df1
-#' @param df2
+#' @param df1 data.frame
+#' @param df2 data.frame
 #'
 #' @return character vector of changes
 #' @export
@@ -325,8 +325,8 @@ comp_dfs <- function(df1, df2){
 
 #' list_cols_to_csv
 #'
-#' @param df
-#' @param file_path
+#' @param df data.frame
+#' @param file_path chr
 #' @param ... passed to write_excel_csv
 #'
 #' @return

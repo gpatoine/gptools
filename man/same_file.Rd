@@ -7,7 +7,9 @@
 same_file(file1, file2)
 }
 \arguments{
-\item{file2}{}
+\item{file1}{chr path}
+
+\item{file2}{chr path}
 }
 \value{
 logical

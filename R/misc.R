@@ -15,8 +15,8 @@ which.nonnum <- function(x) {
 
 #' nonumdf
 #'
-#' @param df
-#' @param cols
+#' @param df data.frame
+#' @param cols col number?
 #'
 #' @return
 #' @export
@@ -55,8 +55,8 @@ nonumdf <- function(df, cols = seq_along(df)){
 #'
 #' dictionary of terms to replace
 #'
-#' @param x
-#' @param dict
+#' @param x object
+#' @param dict list?
 #'
 #' @return
 #' @export
@@ -164,3 +164,16 @@ gp_jobinfo <- function() {
 }
 
 
+
+#' Scale2
+#'
+#' Same as scale but works with vectors, not matrices, and therefore with mutate
+#'
+#' @param x numeric vector to scale
+#' @param na.rm logical
+#'
+#' @return
+#' @export
+gp_scale2 <- function(x, na.rm = FALSE) {
+  (x - mean(x, na.rm = na.rm)) / sd(x, na.rm)
+}

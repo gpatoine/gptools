@@ -7,6 +7,10 @@
 list_cols_to_csv(df, file_path, ...)
 }
 \arguments{
+\item{df}{data.frame}
+
+\item{file_path}{chr}
+
 \item{...}{passed to write_excel_csv}
 }
 \value{

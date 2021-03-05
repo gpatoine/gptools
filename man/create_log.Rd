@@ -7,7 +7,9 @@
 create_log(file, ts_path)
 }
 \arguments{
-\item{ts_path}{}
+\item{file}{chr path}
+
+\item{ts_path}{chr path}
 }
 \value{
 

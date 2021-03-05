@@ -7,7 +7,9 @@
 repl_dict(x, dict)
 }
 \arguments{
-\item{dict}{}
+\item{x}{object}
+
+\item{dict}{list?}
 }
 \value{
 

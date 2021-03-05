@@ -7,7 +7,9 @@
 nonumdf(df, cols = seq_along(df))
 }
 \arguments{
-\item{cols}{}
+\item{df}{data.frame}
+
+\item{cols}{col number?}
 }
 \value{
 
