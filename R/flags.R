@@ -18,7 +18,7 @@ make_flag_col <- function(df) {
 #' Only to be used with Cmic dataset with a New_ID column
 #'
 #' @param df The dataframe
-#' @param id
+#' @param id id
 #' @param new_flag
 #'
 #' @return
@@ -50,8 +50,8 @@ add_flag <- function(df, id, new_flag){
 
 #' get_flag
 #'
-#' @param df
-#' @param id
+#' @param df data.frame
+#' @param id id
 #'
 #' @return
 #' @export

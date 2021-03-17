@@ -9,6 +9,8 @@ add_flag(df, id, new_flag)
 \arguments{
 \item{df}{The dataframe}
 
+\item{id}{id}
+
 \item{new_flag}{}
 }
 \value{

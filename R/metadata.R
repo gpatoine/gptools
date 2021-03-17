@@ -4,6 +4,8 @@
 #'
 #' @return a descriptive table of the columns
 #' @export
+#'
+#' @importFrom dplyr tibble
 coldesc <- function(df){
 
   make_range <- function(x) {
@@ -18,10 +20,10 @@ coldesc <- function(df){
     }
   }
 
-  tibble(Column_names=names(df),
-         Datatype = map_chr(df, typeof),
-         Dataclass = map_chr(df, ~ toString(class(.x))),
-         Range = map_chr(df, make_range),
+  dplyr::tibble(Column_names=names(df),
+         Datatype = purrr::map_chr(df, typeof),
+         Dataclass = purrr::map_chr(df, ~ toString(class(.x))),
+         Range = purrr::map_chr(df, make_range),
          Perc_complete = round(colSums(!is.na(df))/nrow(df)*100, 1))
 
 }

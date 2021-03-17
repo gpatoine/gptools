@@ -7,10 +7,14 @@
 comp_for(df1, df2, id = NULL)
 }
 \arguments{
+\item{df1}{data.frame}
+
+\item{df2}{data.frame}
+
 \item{id}{unique id column name maintained between dataframes}
 }
 \value{
-
+data.frame
 }
 \description{
 Goes cell by cell, for all columns and rows

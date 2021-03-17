@@ -5,8 +5,8 @@
 
 #' comp_sim_df
 #'
-#' @param df1
-#' @param df2
+#' @param df1 data.frame
+#' @param df2 data.frame
 #'
 #' @return dataframe with details about differences
 #' @export
@@ -64,11 +64,11 @@ comp_sim_df <- function(df1, df2){
 #' dplyr::arrange may not always solve the problem, and so sqldf provides a good alternative,
 #' but doesn't give the row number.
 #'
-#' @param df1
-#' @param df2
+#' @param df1 data.frame
+#' @param df2 data.frame
 #' @param id unique id column name maintained between dataframes
 #'
-#' @return
+#' @return data.frame
 #' @export
 comp_for <- function(df1, df2, id = NULL) {
   if(!identical(dim(df1), dim(df2))) stop("dfs of different dimensions")
@@ -110,10 +110,10 @@ comp_for <- function(df1, df2, id = NULL) {
 #'
 #' http://www.cookbook-r.com/Manipulating_data/Comparing_data_frames/
 #'
-#' @param df
-#' @param idcol
+#' @param df data.frame
+#' @param idcol column index (?)
 #'
-#' @return
+#' @return differences
 #' @export
 dupsBetweenGroups <- function (df, idcol) {
   # df: the data frame
@@ -161,11 +161,11 @@ dupsBetweenGroups <- function (df, idcol) {
 
 #' comp_btw
 #'
-#' @param df1
-#' @param df2
+#' @param df1 data.frame
+#' @param df2 data.frame
 #' @param id character
 #'
-#' @return
+#' @return differences
 #' @export
 comp_btw <- function(df1, df2, id = NULL) {
   df1 <- df1 %>% mutate(tag_btw = "one", inner_row_id = seq_len(nrow(df1)))

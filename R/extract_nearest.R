@@ -70,8 +70,6 @@ extract_nearest <- function(x, y, max_range = NULL, .as_na = NULL) {
 #'
 #' @return vector of values
 #' @export
-#'
-#' @examples
 extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
   # x = xus[[1]]
   # y = uni_loc
@@ -142,8 +140,6 @@ extract_nearest_layer <- function(x, y, max_range = NULL, .as_na = NULL) {
 #'
 #' @return data.frame with extract value and distance from cell
 #' @export
-#'
-#' @examples
 extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
   # point <- miss_y[2,]
 

@@ -85,7 +85,7 @@ list_tmst <- function(fold, pattern = ".", recursive = FALSE) {
   stamps_all[ind14] <- stamps14
   stamps_all[!ind14] <- stamps_sep
 
-  dplyr::arrange(tibble(files, stamps_all), stamps_all) %>% print(n = 30)
+  dplyr::arrange(tibble(files, stamps_all), dplyr::desc(stamps_all)) %>% print(n = 30)
 
 }
 

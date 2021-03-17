@@ -7,10 +7,14 @@
 comp_btw(df1, df2, id = NULL)
 }
 \arguments{
+\item{df1}{data.frame}
+
+\item{df2}{data.frame}
+
 \item{id}{character}
 }
 \value{
-
+differences
 }
 \description{
 comp_btw

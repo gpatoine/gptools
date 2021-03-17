@@ -7,7 +7,9 @@
 get_flag(df, id)
 }
 \arguments{
-\item{id}{}
+\item{df}{data.frame}
+
+\item{id}{id}
 }
 \value{
 

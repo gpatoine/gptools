@@ -7,10 +7,12 @@
 dupsBetweenGroups(df, idcol)
 }
 \arguments{
-\item{idcol}{}
+\item{df}{data.frame}
+
+\item{idcol}{column index (?)}
 }
 \value{
-
+differences
 }
 \description{
 http://www.cookbook-r.com/Manipulating_data/Comparing_data_frames/
