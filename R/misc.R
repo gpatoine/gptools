@@ -177,3 +177,22 @@ gp_jobinfo <- function() {
 gp_scale2 <- function(x, na.rm = FALSE) {
   (x - mean(x, na.rm = na.rm)) / sd(x, na.rm)
 }
+
+
+
+
+#' gp_ggaes
+#'
+#' ggplot possible aesthetics
+#'
+#' Lists all possible aesthetics arguments for a given geom
+#'
+#' @param geom character which geom?
+#'
+#' @return vector of argument names
+#' @export
+#'
+#' @examples gp_ggaes("violin")
+gp_ggaes <- function(geom) {
+  ggplot2:::check_subclass(geom, "Geom")$aesthetics()
+}

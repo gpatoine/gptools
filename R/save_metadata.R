@@ -77,6 +77,18 @@ ggsaveme <- function(filename, plot = NULL, comment = NULL,...) {
 #' @export
 record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 
+  ft_dir <- if ("ft_dir" %in% ls(envir = .GlobalEnv)) {
+    get("ft_dir", envir = .GlobalEnv)
+  } else {
+    ""
+  }
+
+  ft_path <- here(paste0(ft_dir, "project_file_tracking.csv"))
+
+  if (!file.exists(ft_path)) {
+    stop(paste0(ft_path, " not found. Create it with create_project_file_tracking()"))
+  }
+
   # TODO understand why rstudioapi works from local job on local computer but not on remote desktop ??? R version?
   rstu <- rstudioapi::isAvailable()
 
@@ -127,11 +139,55 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
   )
 
   # write to csv
-  # TODO create file if it doesn't exist, probably in main project folder
-  write_csv(tib, here("archd/project_file_tracking.csv"), append = TRUE)
+  write_csv(tib, ft_path, append = TRUE)
 
 }
 
-
-
 # saveme(cmic, here("data_mod/test_cmic_saveit.rds"), saveRDS)
+
+
+#' create_project_file_tracking
+#'
+#' Create tracking file
+#'
+#' @param dir chr In which folder should the file be created. Defaults to project folder.
+#' @param add_profile logical Should a note be done in .Rprofile for non-default dir
+#'
+#' @return NULL
+#' @export
+create_project_file_tracking <- function(dir = NULL, add_profile = FALSE) {
+
+  ft_path <- here(paste0(dir, "project_file_tracking.csv"))
+
+  if (file.exists(ft_path)) {
+    stop(paste0(ft_path, " exists already. Delete it first to create a new one."))
+  }
+
+  tib <- tibble(
+    date = NA,
+    time = NA,
+    basename = NA,
+    dirname_rel = NA,
+    comment = NA,
+    source = NA,
+    machine = NA,
+    object_name = NA,
+    object_class = NA,
+    dim = NA,
+    full_path = NA
+  ) %>% slice(0)
+
+  write_csv(tib, ft_path)
+
+  if (add_profile & !is.null(dir)) {
+
+    if (file.exists(here(".Rprofile"))) {
+      write(dir, file = here(".Rprofile"), append=TRUE)
+    } else {
+      warning("No .Rprofile found.")
+    }
+  }
+
+  NULL
+
+}
