@@ -38,6 +38,8 @@ saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) {
 
 #' GGsave metadata
 #'
+#' Source is empty if the function was called from an unsaved script.
+#'
 #' @param filename character Path to save file
 #' @param plot Object to save. Last plot if unspecified
 #' @param comment character
