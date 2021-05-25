@@ -167,7 +167,7 @@ gp_gplot <- function(x, maxpixels = 5e+4, filt_val = NULL) { #, ...
   x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
 
   coords <- xyFromCell(x, seq_len(ncell(x)))
-  dat <- stack(as.data.frame(values(x)))
+  dat <- utils::stack(as.data.frame(values(x)))
   names(dat) <- c('value', 'variable')
   dat <- cbind(coords, dat)
   # dat$value %>% unique

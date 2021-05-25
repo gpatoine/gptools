@@ -190,6 +190,6 @@ create_project_file_tracking <- function(dir = NULL, add_profile = FALSE) {
     }
   }
 
-  NULL
+  insvisible(NULL)
 
 }
