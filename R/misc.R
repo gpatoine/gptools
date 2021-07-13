@@ -196,3 +196,25 @@ gp_scale2 <- function(x, na.rm = FALSE) {
 gp_ggaes <- function(geom) {
   ggplot2:::check_subclass(geom, "Geom")$aesthetics()
 }
+
+
+#' Write dataframe names
+#'
+#' Convenience function
+#'
+#' @param x anything that has names
+#' @param sort alphabetical sorting
+#'
+#' @return x
+#' @export wrnam(cars)
+wrnam <- function(x, sort = TRUE) {
+
+  if (sort) {
+    writeLines(sort(names(x)))
+  } else {
+    writeLines(names(x))
+  }
+
+  invisible(x)
+
+}
