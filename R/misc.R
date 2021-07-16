@@ -207,7 +207,7 @@ gp_ggaes <- function(geom) {
 #'
 #' @return x
 #' @export wrnam(cars)
-wrnam <- function(x, sort = TRUE) {
+wrnam <- function(x, sort = FALSE) {
 
   if (sort) {
     writeLines(sort(names(x)))
