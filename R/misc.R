@@ -206,7 +206,8 @@ gp_ggaes <- function(geom) {
 #' @param sort alphabetical sorting
 #'
 #' @return x
-#' @export wrnam(cars)
+#' @export
+#' @examples wrnam(cars)
 wrnam <- function(x, sort = FALSE) {
 
   if (sort) {

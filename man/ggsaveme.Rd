@@ -19,5 +19,5 @@ ggsaveme(filename, plot = NULL, comment = NULL, ...)
 
 }
 \description{
-GGsave metadata
+Source is empty if the function was called from an unsaved script.
 }
