@@ -3,9 +3,9 @@
 #check nonnum values
 #' which.nonnum
 #'
-#' @param x
+#' @param x input
 #'
-#' @return
+#' @return logical
 #' @export
 which.nonnum <- function(x) {
   badNum <- is.na(suppressWarnings(as.numeric(as.character(x))))
