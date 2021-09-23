@@ -4,7 +4,7 @@
 \alias{coldesc}
 \title{coldesc}
 \usage{
-coldesc(df)
+coldesc(df, view = FALSE)
 }
 \arguments{
 \item{df}{data frame}

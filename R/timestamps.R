@@ -20,7 +20,7 @@ tmst <- function(ext = NULL, time = T, prefix = "_c") {
   if (time) {
     paste0(prefix, format(Sys.time(), "%Y-%m-%d_%H%M%S"), ext)
   } else {
-    paste0(prefix, format(Sys.time(), "%Y-%m-%d"))
+    paste0(prefix, format(Sys.time(), "%Y-%m-%d"), ext)
   }
 }
 

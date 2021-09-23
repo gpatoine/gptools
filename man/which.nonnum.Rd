@@ -7,10 +7,10 @@
 which.nonnum(x)
 }
 \arguments{
-\item{x}{}
+\item{x}{input}
 }
 \value{
-
+logical
 }
 \description{
 which.nonnum

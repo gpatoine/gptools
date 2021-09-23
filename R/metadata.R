@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @importFrom dplyr tibble
-coldesc <- function(df){
+coldesc <- function(df, view = FALSE){
 
   make_range <- function(x) {
     if (inherits(x, c("numeric", "integer"))) {
@@ -20,10 +20,18 @@ coldesc <- function(df){
     }
   }
 
-  dplyr::tibble(Column_names=names(df),
-         Datatype = purrr::map_chr(df, typeof),
+  meta <- dplyr::tibble(Column_names=names(df),
+         # Datatype = purrr::map_chr(df, typeof),
          Dataclass = purrr::map_chr(df, ~ toString(class(.x))),
          Range = purrr::map_chr(df, make_range),
          Perc_complete = round(colSums(!is.na(df))/nrow(df)*100, 1))
+
+  if (view) {
+    View(meta, "meta")
+  } else {
+    print(meta, n = 40)
+  }
+
+  invisible(meta)
 
 }
