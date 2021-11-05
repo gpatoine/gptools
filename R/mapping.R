@@ -103,7 +103,7 @@ gp_point_neighbor <- function(point, ras, dist = 8000) {
 
   # deal with different extract outputs
   buff_vals <-
-    if (class(buff_vals0) == "numeric") {
+    if (inherits(buff_vals0, "numeric")) {
       data.frame(as.list(buff_vals0))
     } else {
       as.data.frame(buff_vals0)

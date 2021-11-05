@@ -219,3 +219,95 @@ wrnam <- function(x, sort = FALSE) {
   invisible(x)
 
 }
+
+
+#' Make header
+#'
+#' Creates a section header
+#' Need to position the cursor after function call and run with alt+enter for best results.
+#'
+#' @param text character
+#' @param symbol single character
+#' @param width numeric
+#'
+#' @return NULL
+#' @export
+#'
+#' @examples mk_hdr("My Title")
+mk_hdr <- function(text, symbol = "*", width = 60) {
+
+  deco <- paste0("# ", paste(rep(symbol, width), collapse = ""))
+
+  pos <- rstudioapi::getActiveDocumentContext()$selection[[1]]$range$start
+  range <- rstudioapi::document_range(c(pos[1], 0), c(pos[1], pos[2]))
+
+  text2 <- paste(deco, paste0("# ", stringr::str_pad(paste0(" ", text, " "), width, "both", symbol)), deco, sep = "\n")
+
+  rstudioapi::insertText(range, text2)
+
+  NULL
+
+}
+
+
+
+#' Paste NA
+#'
+#' paste that removes NAs
+#'
+#' @param ... character vectors
+#' @param sep a character string to separate the terms.
+#'
+#' @return character vector
+#' @export
+#'
+#' @examples
+#' paste_na(c(1,2,3, NA), c('a', NA, NA, NA), c('a', 2, "NA", NA), sep = "--")
+#' paste_na(c(1,NA,3, NA), c('a', 2, NA, NA))
+paste_na <- function(..., sep = "") {
+
+  L <- cbind(...)
+  ret <- apply(L, 1,
+               function(x) paste0(x[!is.na(x)], collapse = sep))
+  is.na(ret) <- ret==""
+  ret
+
+}
+
+
+# more verbose approach
+# paste_na <- function(..., sep = "") {
+#
+#   L <- list(...)
+#   L <- lapply(L,function(x) {x[is.na(x)] <- ""; x})
+#   ret <-gsub(paste0("(^",sep,"|",sep,"$)"),"",
+#              gsub(paste0(sep,sep),sep,
+#                   do.call(paste,c(L,list(sep=sep)))))
+#   is.na(ret) <- ret==""
+#   ret
+#
+# }
+
+
+
+#' Unwrap string
+#'
+#' Convenience function to allow writing text in source with line breaks,
+#' saving character without.
+#'
+#' @param x single character string
+#'
+#' @return character
+#' @export
+#'
+#' @examples
+#' gp_unwrap("This is a very long string
+#'           with spaces and line breaks.
+#'           but that doesn't matter.")
+gp_unwrap <- function(x) {
+
+  x %>% str_split("\n") %>% chuck(1) %>% str_trim %>% paste0(collapse = " ")
+
+}
+
+
