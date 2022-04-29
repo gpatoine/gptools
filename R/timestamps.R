@@ -1,21 +1,29 @@
 #created: 2020-11-11
-#updated: 2020-11-11
+#updated: 2022-04-28
 # author: Guillaume Patoine <guillaume.patoine@idiv.de>
 #purpose: convenience functions to write and read timestamped files.
 # Only for RDS format
 
 
-# TODO rename files from old to new tmst scheme
-
 #' Timestamp
 #'
 #' Squishes, especially useful for file names
 #'
+#' @param ext character extension
 #' @param time logical Should time (HMS) also be included?
+#' @param prefix character to be added before, defaults to "_c"
 #'
-#' @return character squishes timestamp
+#' @return character squished timestamp
 #' @export
 tmst <- function(ext = NULL, time = T, prefix = "_c") {
+
+  if (!is.null(ext)) {
+
+    if(!stringi::stri_sub(ext,1,1) == ".") {
+      ext <- paste0(".", ext)
+    }
+
+  }
 
   if (time) {
     paste0(prefix, format(Sys.time(), "%Y-%m-%d_%H%M%S"), ext)
@@ -23,6 +31,38 @@ tmst <- function(ext = NULL, time = T, prefix = "_c") {
     paste0(prefix, format(Sys.time(), "%Y-%m-%d"), ext)
   }
 }
+
+#' paste-tmst
+#'
+#' @param main character main name
+#' @param ext character
+#' @param ... passed to tmst
+#'
+#' @return path character
+#' @export
+ptmst <- function(main, ext, ...) {
+
+  paste0(main, tmst(ext, ...))
+
+}
+
+
+#' here-paste-tmst
+#'
+#' @param dir folder
+#' @param main character main name
+#' @param ext character
+#' @param ... passed to tmst
+#'
+#' @return
+#' @export
+hptmst <- function(dir, main, ext, ...) {
+
+  here(dir, paste0(main, tmst(ext, ...)))
+
+}
+
+
 
 # deprec
 # tmst <- function(time = T) {

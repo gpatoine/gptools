@@ -7,10 +7,14 @@
 tmst(ext = NULL, time = T, prefix = "_c")
 }
 \arguments{
+\item{ext}{character extension}
+
 \item{time}{logical Should time (HMS) also be included?}
+
+\item{prefix}{character to be added before, defaults to "_c"}
 }
 \value{
-character squishes timestamp
+character squished timestamp
 }
 \description{
 Squishes, especially useful for file names

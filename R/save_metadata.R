@@ -21,16 +21,24 @@
 #'
 #' @return
 #' @export
-saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) {
+saveme <- function(x, file, comment = NULL, FUN = saveRDS, ovr_today = FALSE, ...) {
 
   obj_name <- deparse(match.call()$x)
 
   # do the thing to save metadata
   record_meta(x, file, comment, obj_name)
 
-  # TODO add functionality for ggsave
-
   FUN(x, file, ...)
+
+  # TODO check if previous file exists and overwrite from today
+  # actually not sure how to do that
+
+  # if (ovr_today & !is.na(file)) {
+  #
+  #   file.remove()
+  #
+  # }
+
 
 }
 

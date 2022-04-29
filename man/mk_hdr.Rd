@@ -4,7 +4,7 @@
 \alias{mk_hdr}
 \title{Make header}
 \usage{
-mk_hdr(text, symbol = "*", width = 60)
+mk_hdr(text, symbol = "*", width = 60, symbol2 = "-")
 }
 \arguments{
 \item{text}{character}

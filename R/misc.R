@@ -1,3 +1,7 @@
+#created: 2022-04-28
+#updated: 2022-04-28
+# author: Guillaume Patoine <guillaume.patoine@idiv.de>
+#purpose: description
 
 
 #check nonnum values
@@ -234,21 +238,50 @@ wrnam <- function(x, sort = FALSE) {
 #' @export
 #'
 #' @examples mk_hdr("My Title")
-mk_hdr <- function(text, symbol = "*", width = 60) {
+mk_hdr <- function(text, symbol = "*", width = 60, symbol2 = "-") {
 
   deco <- paste0("# ", paste(rep(symbol, width), collapse = ""))
 
   pos <- rstudioapi::getActiveDocumentContext()$selection[[1]]$range$start
-  range <- rstudioapi::document_range(c(pos[1], 0), c(pos[1], pos[2]))
+  t_range <- rstudioapi::document_range(c(pos[1], 0), c(pos[1], pos[2]))
 
-  text2 <- paste(deco, paste0("# ", stringr::str_pad(paste0(" ", text, " "), width, "both", symbol)), deco, sep = "\n")
+  text2 <- paste(deco, paste0("# ", stringr::str_pad(paste0(" ", text, " "), width, "both", symbol2)), deco, sep = "\n")
 
-  rstudioapi::insertText(range, text2)
+  rstudioapi::insertText(t_range, text2)
 
   NULL
 
 }
 
+
+
+#' Update header with today's date
+#'
+#' @return NULL
+#' @export
+up_date <- function() {
+
+  up_text <- paste0("#updated: ", format(Sys.time(), "%Y-%m-%d"))
+  cur_file <- rstudioapi::getActiveDocumentContext()$path
+
+  hdr <- readr::read_lines(cur_file)[1:4]
+  upd_line <- which(stringr::str_detect(hdr, "#updated"))
+
+  if (length(upd_line) == 1) {
+
+    t_range <- rstudioapi::document_range(c(upd_line, 0), c(upd_line, stringr::str_length(hdr[upd_line])+1))
+
+    rstudioapi::insertText(t_range, up_text)
+
+  } else {
+
+    warning("Could not identify a single 'updated' header line")
+
+  }
+
+  invisible(NULL)
+
+}
 
 
 #' Paste NA
@@ -310,4 +343,17 @@ gp_unwrap <- function(x) {
 
 }
 
+
+#' print tibble all rows
+#'
+#' @param x tibble
+#'
+#' @return x
+#' @export
+prinf <- function(x) {
+
+  print(x, n = Inf)
+  invisible(x)
+
+}
 
