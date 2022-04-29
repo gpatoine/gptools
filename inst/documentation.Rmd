@@ -1,0 +1,132 @@
+---
+title: "Documentation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(here)
+library(tidyverse)
+
+file <- here("R/misc.R")
+file.exists(file)
+```
+
+
+
+
+## Scripts
+
+```{r}
+scripts <- list.files(here("R"))
+scripts %>% writeLines
+```
+
+
+## Packages used
+
+```{r}
+pkgs <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("[a-zA-Z_-]*(?=::)") %>% na.omit %>% as.character) %>% unlist %>% 
+  unique %>% sort %>% .[-1]
+
+pkgs %>% writeLines
+
+
+```
+
+## Functions
+
+```{r}
+fcts <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("^.*(?= <- function\\()") %>% na.omit %>% as.character) %>% unlist %>% 
+  .[str_detect(., "^[a-zA-Z]")]
+
+fcts %>% writeLines
+
+```
+
+
+### Spatial analysis
+
+extract_nearest  
+extract_nearest_layer  
+extract_nearest_value  
+splibs  
+make_grid
+
+
+### Mapping
+
+gp_pointmap  
+gp_point_neighbor  
+gp_open_gmaps  
+gp_gplot
+
+
+### ggplot helpers
+
+one1_line  
+plot_corr  
+gp_ggaes
+
+
+### Compare datasets
+
+comp_sim_df  
+comp_for  
+comp_btw
+
+
+### Flag entries in list-column
+
+make_flag_col  
+add_flag  
+get_flag
+
+
+### Misc
+
+knit_w_tmst  
+coldesc  
+which.nonnum  
+nonumdf  
+gp_dputran  
+gp_file_opened  
+gp_jobinfo  
+gp_scale2  
+wrnam  
+mk_hdr  
+up_date  
+paste_na  
+gp_unwrap  
+prinf
+
+
+### Data archiving (archd_fct.R)
+
+#### ArchD
+
+This project is mostly deprecated. It provided a form of version control for dataset that were modified within and without R, with saving intermediate versions. It worked quite well, but was possibly overkill for most tasks. It was abandoned in favor of a simpler approach implemented with file tracking.
+
+Functions: ad_init, ad_archive, ad_save, ad_to_date, ad_lsv, default_fold, mk_timestamp, same_file, create_log, update_log, comp_dfs, list_cols_to_csv
+
+
+#### File tracking
+
+saveme  
+ggsaveme  
+record_meta  
+create_project_file_tracking  
+tmst  
+ptmst  
+hptmst  
+last_tmst  
+list_tmst  
+
+
+### Data Viz
+plot_psem  
+plot_lavaan  
+psemtolav
