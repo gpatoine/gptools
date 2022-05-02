@@ -5,9 +5,8 @@ Version: 0.1.0
 Author: Guillaume Patoine
 Maintainer: Guillaume Patoine <guillaume.patoine@idiv.de>
 Description: A number of functions to support my work, so I have them all at the same place. Some of these might be useful for other people too. Just ask if you have questions.
-License: Dunno
+License: GPL (>= 3)
 Encoding: UTF-8
-LazyData: true
 Imports:
   raster,
   sf,
