@@ -6,10 +6,6 @@
 # (package lavaan) to get a quick rendering of you model.
 # The functions need to be changed if you want a specific output format (color, shapes, etc.).
 
-library(magrittr)
-library(dplyr)
-library(DiagrammeR)
-library(stringr)
 
 plot_psem <- function(model, layout = "dot", render = TRUE){
 
@@ -29,7 +25,7 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
 
   #define type based on ~~ symbol
   ctab$type <- "regression"
-  ctab$type[str_detect(ctab$Response, "^~~*")] <- "correlation"
+  ctab$type[stringr::str_detect(ctab$Response, "^~~*")] <- "correlation"
 
   #clean names
   ctab$Response <- gsub("~~", "", ctab$Response)
@@ -39,7 +35,7 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
   # make a nodes DF ---------------------------------------------------------
 
   unique_nodes <- unique(c(ctab$Response, ctab$Predictor))
-  nodes <- create_node_df(n = length(unique_nodes),
+  nodes <- DiagrammeR::create_node_df(n = length(unique_nodes),
                           nodes = unique_nodes,
                           type = "lower",
                           label = unique_nodes)
@@ -60,7 +56,7 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
 
   # make an edges DF --------------------------------------------------------
 
-  edges <- create_edge_df(
+  edges <- DiagrammeR::create_edge_df(
     from = match(ctab$Predictor, unique_nodes),
     to = match(ctab$Response, unique_nodes),
     type = ctab$type,
@@ -93,22 +89,22 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
 
   # put graph together ------------------------------------------------------
 
-  sem_graph <- create_graph(nodes, edges, directed=TRUE, attr_theme = "default")
-  render_graph(sem_graph)
+  sem_graph <- DiagrammeR::create_graph(nodes, edges, directed=TRUE, attr_theme = "default")
+  DiagrammeR::render_graph(sem_graph)
 
   neato_graph <- sem_graph %>%
-    add_global_graph_attrs("fixedsize", "false", "node") %>%
-    add_global_graph_attrs("width", "1.5", "node") %>%
-    add_global_graph_attrs("fontcolor", "black", "node") %>%
-    add_global_graph_attrs("len", "5", "edge") %>%
-    add_global_graph_attrs("splines", "true", "graph")
+    DiagrammeR::add_global_graph_attrs("fixedsize", "false", "node") %>%
+    DiagrammeR::add_global_graph_attrs("width", "1.5", "node") %>%
+    DiagrammeR::add_global_graph_attrs("fontcolor", "black", "node") %>%
+    DiagrammeR::add_global_graph_attrs("len", "5", "edge") %>%
+    DiagrammeR::add_global_graph_attrs("splines", "true", "graph")
 
   if (layout == "neato") {
 
     if (render == FALSE) {
       neato_graph
     } else {
-      render_graph(neato_graph)
+      DiagrammeR::render_graph(neato_graph)
     }
 
     #generate_dot(neato_graph) %>% writeClipboard()
@@ -118,19 +114,19 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
 
   } else if (layout == "dot"){
     dot_graph <- neato_graph %>%
-      add_global_graph_attrs(attr = "layout",
+      DiagrammeR::add_global_graph_attrs(attr = "layout",
                              value = "dot",
                              attr_type = "graph") %>%
       #add_global_graph_attrs("rankdir", "TB", "graph") %>% #left to right
       #add_global_graph_attrs("ranksep", "2", "graph") %>% #bit more space horizontally
-      add_global_graph_attrs("fontsize", "16", "node") %>%
-      add_global_graph_attrs("fontsize", "12", "edge") %>%
-      delete_global_graph_attrs("len", "edge")
+      DiagrammeR::add_global_graph_attrs("fontsize", "16", "node") %>%
+      DiagrammeR::add_global_graph_attrs("fontsize", "12", "edge") %>%
+      DiagrammeR::delete_global_graph_attrs("len", "edge")
 
     if (render == FALSE) {
       dot_graph
     } else {
-      render_graph(dot_graph)
+      DiagrammeR::render_graph(dot_graph)
     }
 
     #render_graph(dot_graph) #position doesn't work with dot, so we need to use ranks directly in the code
@@ -140,7 +136,6 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
 }
 
 plot_lavaan <- function(model, layout = "dot", render = TRUE){
-  library(DiagrammeR)
 
   #function defaults for plotting
   node_attrs = data.frame(shape = "rectangle", color = "black",
@@ -163,7 +158,7 @@ plot_lavaan <- function(model, layout = "dot", render = TRUE){
   # make a nodes DF ---------------------------------------------------------
 
   unique_nodes <- unique(c(ctab$Response, ctab$Predictor))
-  nodes <- create_node_df(n = length(unique_nodes),
+  nodes <- DiagrammeR::create_node_df(n = length(unique_nodes),
                           nodes = unique_nodes,
                           type = "lower",
                           label = unique_nodes)
@@ -217,21 +212,21 @@ plot_lavaan <- function(model, layout = "dot", render = TRUE){
 
   # put graph together ------------------------------------------------------
 
-  sem_graph <- create_graph(nodes, edges, directed=TRUE, attr_theme = "default")
-  render_graph(sem_graph)
+  sem_graph <- DiagrammeR::create_graph(nodes, edges, directed=TRUE, attr_theme = "default")
+  DiagrammeR::render_graph(sem_graph)
 
   neato_graph <- sem_graph %>%
-    add_global_graph_attrs("fixedsize", "false", "node") %>%
-    add_global_graph_attrs("width", "1.5", "node") %>%
-    add_global_graph_attrs("fontcolor", "black", "node") %>%
-    add_global_graph_attrs("len", "5", "edge") %>%
-    add_global_graph_attrs("splines", "true", "graph")
+    DiagrammeR::add_global_graph_attrs("fixedsize", "false", "node") %>%
+    DiagrammeR::add_global_graph_attrs("width", "1.5", "node") %>%
+    DiagrammeR::add_global_graph_attrs("fontcolor", "black", "node") %>%
+    DiagrammeR::add_global_graph_attrs("len", "5", "edge") %>%
+    DiagrammeR::add_global_graph_attrs("splines", "true", "graph")
 
   if (layout == "neato") {
     if (render == FALSE) {
       neato_graph
     } else {
-      render_graph(neato_graph)
+      DiagrammeR::render_graph(neato_graph)
     }
 
     #generate_dot(neato_graph) %>% writeClipboard()
@@ -240,20 +235,20 @@ plot_lavaan <- function(model, layout = "dot", render = TRUE){
     #export_graph(neato_graph, file_name = "SEM_neato.pdf")
 
   } else if (layout == "dot"){
-    dot_graph <- neato_graph %>%
-      add_global_graph_attrs(attr = "layout",
+    dot_graph <- DiagrammeR::neato_graph %>%
+      DiagrammeR::add_global_graph_attrs(attr = "layout",
                              value = "dot",
                              attr_type = "graph") %>%
       #add_global_graph_attrs("rankdir", "TB", "graph") %>% #left to right
       #add_global_graph_attrs("ranksep", "2", "graph") %>% #bit more space horizontally
-      add_global_graph_attrs("fontsize", "16", "node") %>%
-      add_global_graph_attrs("fontsize", "12", "edge") %>%
-      delete_global_graph_attrs("len", "edge")
+      DiagrammeR::add_global_graph_attrs("fontsize", "16", "node") %>%
+      DiagrammeR::add_global_graph_attrs("fontsize", "12", "edge") %>%
+      DiagrammeR::delete_global_graph_attrs("len", "edge")
 
     if (render == FALSE) {
       dot_graph
     } else {
-      render_graph(dot_graph)
+      DiagrammeR::render_graph(dot_graph)
     }
 
     #render_graph(dot_graph) #position doesn't work with dot, so we need to use ranks directly in the code
@@ -268,10 +263,10 @@ plot_lavaan <- function(model, layout = "dot", render = TRUE){
 #helps to transform psem code to lavaan
 psemtolav <- function(string, data){
   string %>%
-    str_remove_all(pattern = "lm\\(") %>%
-    str_remove_all(paste0(", ", data, "\\),")) %>%
-    str_remove_all(",") %>%
-    str_replace_all("%", " ")
+    stringr::str_remove_all(pattern = "lm\\(") %>%
+    stringr::str_remove_all(paste0(", ", data, "\\),")) %>%
+    stringr::str_remove_all(",") %>%
+    stringr::str_replace_all("%", " ")
 }
 
 

@@ -46,8 +46,9 @@ gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = "gg") {
 
   if (type == "leaf") {
     leaflet::leaflet(data = data) %>%
-      leaflet::addProviderTiles("Stamen.Watercolor",
-                                options = leaflet::providerTileOptions(noWrap = TRUE)) %>%
+      leaflet::addTiles() %>%
+      # leaflet::addProviderTiles("Stamen.Watercolor",
+      #                           options = leaflet::providerTileOptions(noWrap = TRUE)) %>%
       leaflet::addMarkers(lat = ~latitude,
                           lng = ~longitude,
                           popup = ~as.character(paste(sep = "", "<b>", "id: ",
@@ -93,6 +94,8 @@ gp_point_neighbor <- function(point, ras, dist = 8000) {
 
   point <- point %>% dplyr::slice(1)
 
+  point <- st_transform(point, crs(ras))
+
   buff_vals0 <- raster::extract(ras, point, buffer = dist*1.05,
                                 cellnumbers = TRUE, small = TRUE) %>% .[[1]]
 
@@ -114,16 +117,22 @@ gp_point_neighbor <- function(point, ras, dist = 8000) {
   x_sub[] <- ras[values(x_sub)]
 
   # remove too far cells
-  dist_r <- replace(raster::distanceFromPoints(x_sub, point), is.na(x_sub), NA)
+  # need to transform, raster doesn't by itself
+  dist_r <- replace(raster::distanceFromPoints(x_sub, point),
+                    is.na(x_sub), NA)
   dist_r[dist_r > dist] <- NA
 
   # subset
   x_sub[is.na(dist_r)] <- NA
 
-  rasterVis::gplot(x_sub)+
-    ggplot2::geom_raster(aes(fill = factor(value)))+
-    ggplot2::geom_sf(data = point, inherit.aes = F)+
-    ggplot2::scale_fill_discrete(type = "Dark2", na.value = NA)
+  gp_gplot(x_sub)+
+    ggplot2::geom_sf(data = point, inherit.aes = F)
+
+  # doesn't work well
+  # rasterVis::gplot(x_sub)+
+  #   ggplot2::geom_raster(aes(fill = factor(value)))+
+  #   ggplot2::geom_sf(data = point, inherit.aes = F)+
+  #   ggplot2::scale_fill_discrete(type = "Dark2", na.value = NA)
 
 }
 
@@ -144,7 +153,7 @@ gp_open_gmaps <- function(point){
   # browseURL("https://www.google.com/maps/")
 
   loc <- point %>% st_coordinates %>% rev
-  browseURL(paste0("https://www.google.com/maps/@", loc[1], ",", loc[2], ",14z"))
+  browseURL(paste0("https://www.google.com/maps/search/", loc[1], ",", loc[2], "/@", loc[1], ",", loc[2], ",14z"))
 
 }
 

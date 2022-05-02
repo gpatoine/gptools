@@ -89,18 +89,9 @@ mahadist <- function (dat, world, vars, xy = c("X", "Y")){
 
 #https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html
 
-#' Load spatial libraries
-#'
-#' @return
-#' @export
-splibs <- function(){
-  library(ggplot2)
-  theme_set(theme_bw())
-  library(sf)
-  library(rnaturalearth)
-  library(rnaturalearthdata)
+# Used to have a function called splibs to load spatial libraries, but that's terrible practice so removed it
+# Was loading ggplot2, sf, rnaturalearth, and rnaturalearthdata
 
-}
 
 #' Make a mahalanobis map
 #'
@@ -110,15 +101,14 @@ splibs <- function(){
 #' @return
 #' @export
 mahamap <- function (dat, xy = c("X", "Y")){
-  splibs()
-  worldmap <- ne_countries(scale = "medium", returnclass = "sf")
-  worldmap <- worldmap %>% filter(admin != "Antarctica")
+  worldmap <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+  worldmap <- worldmap %>% dplyr::filter(admin != "Antarctica")
 
   ggplot(data = worldmap) +
-    geom_sf()+
-    geom_tile(data = dat, aes_string(x=xy[1], y=xy[2], fill="mahatype"))+
-    scale_fill_manual(values=c("green", "orange", "red"))+
-    theme(panel.background = element_rect(fill = "lightskyblue1"))
+    ggplot2::geom_sf()+
+    ggplot2::geom_tile(data = dat, ggplot2::aes_string(x=xy[1], y=xy[2], fill="mahatype"))+
+    ggplot2::scale_fill_manual(values=c("green", "orange", "red"))+
+    ggplot2::theme(panel.background = ggplot2::element_rect(fill = "lightskyblue1"))
 
 }
 
@@ -139,20 +129,20 @@ mahamap <- function (dat, xy = c("X", "Y")){
 #' @return ggplot
 #' @export
 mahagrad <- function (dat, xy = c("X", "Y"), mask = F){
-  splibs()
-  worldmap <- ne_countries(scale = "medium", returnclass = "sf")
 
-  p <- ggplot(data = worldmap) +
-    geom_sf()+
-    geom_tile(data = dat, aes_string(x=xy[1], y=xy[2], fill="mahaDistance"))+
-    scale_fill_gradient(low = "green", high = "red", trans = "sqrt")+
-    theme(panel.background = element_rect(fill = "lightskyblue1"))
+  worldmap <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+
+  p <- ggplo2::ggplot(data = worldmap) +
+    ggplo2::geom_sf()+
+    ggplo2::geom_tile(data = dat, ggplo2::aes_string(x=xy[1], y=xy[2], fill="mahaDistance"))+
+    ggplo2::scale_fill_gradient(low = "green", high = "red", trans = "sqrt")+
+    ggplo2::theme(panel.background = ggplo2::element_rect(fill = "lightskyblue1"))
 
   if (mask) {
 
-    mahamask <- dat %>% filter(mahatype == "chisq > 0.975")
+    mahamask <- dat %>% dplyr::filter(mahatype == "chisq > 0.975")
     p <- p +
-      geom_tile(data = mahamask, aes_string(x=xy[1], y=xy[2]), fill = "grey")
+      ggplo2::geom_tile(data = mahamask, aes_string(x=xy[1], y=xy[2]), fill = "grey")
   }
 
   p
@@ -168,20 +158,21 @@ mahagrad <- function (dat, xy = c("X", "Y"), mask = F){
 #' @return ggplot
 #' @export
 mahamask <- function (dat, xy = c("X", "Y")){
-  splibs()
-  worldmap <- ne_countries(scale = "medium", returnclass = "sf")
-  worldmap <- worldmap %>% filter(admin != "Antarctica")
 
-  showland <- dat %>% filter(!mahatype == "chisq > 0.975")
-  maskland <- dat %>% filter(mahatype == "chisq > 0.975")
+  worldmap <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+  worldmap <- worldmap %>% dplyr::filter(admin != "Antarctica")
 
-  ggplot(data = worldmap) +
-    geom_tile(data = showland, aes_string(x=xy[1], y=xy[2], fill="mahaDistance"))+
-    geom_tile(data = maskland, aes_string(x=xy[1], y=xy[2]), fill = "grey80")+
-    scale_fill_gradient(low = "green", high = "red", guide = F)+ #, trans = "sqrt"
-    geom_sf(fill = NA, color = "grey50", size = 0.1)+
+  showland <- dat %>% dplyr::filter(!mahatype == "chisq > 0.975")
+  maskland <- dat %>% dplyr::filter(mahatype == "chisq > 0.975")
+
+  ggplot2::ggplot(data = worldmap) +
+    ggplot2::geom_tile(data = showland, ggplot2::aes_string(x=xy[1], y=xy[2], fill="mahaDistance"))+
+    ggplot2::geom_tile(data = maskland, ggplot2::aes_string(x=xy[1], y=xy[2]), fill = "grey80")+
+    ggplot2::scale_fill_gradient(low = "green", high = "red", guide = F)+ #, trans = "sqrt"
+    ggplot2::geom_sf(fill = NA, color = "grey50", size = 0.1)+
     #theme(panel.background = element_rect(fill = "lightskyblue1"))
-    theme_void()
+    ggplot2::theme_void()
+
 
 }
 
