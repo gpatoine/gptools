@@ -1,7 +1,7 @@
 Package: gptools
 Type: Package
 Title: Collection of useful functions
-Version: 0.1.0
+Version: 0.1.1
 Author: Guillaume Patoine
 Maintainer: Guillaume Patoine <guillaume.patoine@idiv.de>
 Description: A number of functions to support my work, so I have them all at the same place. Some of these might be useful for other people too. Just ask if you have questions.
