@@ -3,27 +3,27 @@
 #'
 #' Guesses which columns contain location information
 #'
-#' @param df data
+#' @param data data
 #' @param coords cloumn names like c("x", "y")
 #'
 #' @return sf object
 #' @export
-make_sf_wgs84 <- function(df, coords = NULL) {
+make_sf_wgs84 <- function(data, coords = NULL) {
 
-  if (inherits(df, "sf")) {
+  if (inherits(data, "sf")) {
 
     message("The object is already of class `sf`")
-    return(df)
+    return(data)
 
   }
 
-  checkmate::assert_data_frame(df)
+  checkmate::assert_data_frame(data)
 
   # deal with coords
   if (!is.null(coords)) {
 
     checkmate::assert_character(coords, len = 2)
-    checkmate::assert(all(coords %in% names(df)))
+    checkmate::assert(all(coords %in% names(data)))
 
     lng_tag <- coords[1]
     lat_tag <- coords[2]
@@ -40,7 +40,7 @@ make_sf_wgs84 <- function(df, coords = NULL) {
 
   }
 
-  df %>% dplyr::rename(longitude = all_of(lng_tag),
+  data %>% dplyr::rename(longitude = all_of(lng_tag),
                        latitude = all_of(lat_tag)
                        ) %>%
     sf::st_as_sf(coords = c("longitude", "latitude"),
@@ -67,8 +67,10 @@ qwmap <- function(data) {
 
   ggplot2::ggplot(data) +
     ggplot2::borders()+
-    ggplot2::geom_sf(color = "red", shape = 1)+
-    ggplot2::theme_bw()
+    ggplot2::geom_sf(color = "blue", alpha = 0.2, size = 2)+
+    ggplot2::coord_sf(expand = FALSE)+
+    ggplot2::theme_bw()+
+    ggplot2::labs(x = "Longitude", y = "Latitude")
 
 }
 
@@ -116,7 +118,7 @@ gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = c("mapview", 
 
     # TODO add color per group, fix id_col
 
-    leaflet::leaflet(data = data) %>%
+    lmap <- leaflet::leaflet(data = data) %>%
       leaflet::addTiles() %>%
       # leaflet::addProviderTiles("Stamen.Watercolor",
       #                           options = leaflet::providerTileOptions(noWrap = TRUE)) %>%
@@ -129,6 +131,17 @@ gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = c("mapview", 
         clusterOptions = leaflet::markerClusterOptions()) %>%
       leaflet::addScaleBar(position = "topright")
 
+    if(nrow(data) == 1) {
+
+      lmap <- lmap %>%
+        leaflet::setView(lng = .$x$calls[[2]]$args[[2]],
+                         lat = .$x$calls[[2]]$args[[1]],
+                         zoom = 12)
+
+    } else {
+      lmap
+
+    }
 
   } else if (type == "ggplot") {
 
@@ -162,7 +175,7 @@ gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = c("mapview", 
 gp_point_ras <- function(point, ras, dist = 8000, type = c("mapview", "ggplot")) {
 
   if (!inherits(point, "sf")) {
-    point <- gp_make_sf(point)
+    point <- make_sf_wgs84(point)
   }
 
   type <- match.arg(type)
@@ -226,19 +239,19 @@ gp_point_ras <- function(point, ras, dist = 8000, type = c("mapview", "ggplot"))
 #' @examples open_gmaps(point)
 gp_open_gmaps <- function(point){
 
-  point <- point %>% slice(1)
+  point <- point %>% dplyr::slice(1)
 
   if (!inherits(point, "sf")) {
 
     # slow, but wtv
-    point <- gp_make_sf(point)
+    point <- make_sf_wgs84(point)
 
   }
 
   # point %>% st_coordinates %>% rev %>% toString %>% writeClipboard
   # browseURL("https://www.google.com/maps/")
 
-  loc <- point %>% sf::st_coordinates %>% rev
+  loc <- point %>% sf::st_coordinates() %>% rev
   browseURL(paste0("https://www.google.com/maps/search/", loc[1], ",", loc[2], "/@", loc[1], ",", loc[2], ",14z"))
 
 }
