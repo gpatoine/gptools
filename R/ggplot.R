@@ -26,9 +26,11 @@ plot_corr <- function(data, x, y) {
 
   corr <- data %>% select({{x}}, {{y}}) %>% cor(use = "complete") %>% .[2,1] %>% round(3)
 
-  ggplot(soil_mer, aes(total_n_tc, tn_goet))+
+  ggplot(soil_mer, aes({{x}}, {{y}}))+
     geom_point()+
     geom_abline(slope = 1)+
-    annotate(geom = "text", x = -Inf, y = Inf, label = paste0("r = ", corr), hjust = -0.1, vjust = 1.1)
+    annotate(geom = "text", x = -Inf, y = Inf,
+             label = paste0("r = ", corr),
+             hjust = -0.1, vjust = 1.1)
 
 }
