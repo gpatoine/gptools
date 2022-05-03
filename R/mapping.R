@@ -1,7 +1,85 @@
 
-# TODO still issues with the leaflet one
+#' Create sf object (WGS84) from dataframe
+#'
+#' Guesses which columns contain location information
+#'
+#' @param df data
+#' @param coords cloumn names like c("x", "y")
+#'
+#' @return sf object
+#' @export
+make_sf_wgs84 <- function(df, coords = NULL) {
+
+  if (inherits(df, "sf")) {
+
+    message("The object is already of class `sf`")
+    return(df)
+
+  }
+
+  checkmate::assert_data_frame(df)
+
+  # deal with coords
+  if (!is.null(coords)) {
+
+    checkmate::assert_character(coords, len = 2)
+    checkmate::assert(all(coords %in% names(df)))
+
+    lng_tag <- coords[1]
+    lat_tag <- coords[2]
+
+  } else {
+
+    lng_vect <- c("longitude", "Longitude", "lng", "Lng", "long", "Long", "x", "X")
+    lat_vect <- c("latitude", "Latitude", "lat", "Lat", "y", "Y")
+
+    lng_tag <- lng_vect[which(lng_vect %in% names(data))[1]]
+    lat_tag <- lat_vect[which(lat_vect %in% names(data))[1]]
+
+    checkmate::assert(!(is.na(lat_tag)) & !(is.na(lng_tag)))
+
+  }
+
+  df %>% dplyr::rename(longitude = all_of(lng_tag),
+                       latitude = all_of(lat_tag)
+                       ) %>%
+    sf::st_as_sf(coords = c("longitude", "latitude"),
+                 crs = 4326,
+                 remove = FALSE)
+
+}
+
+
 
 #' Quick world map
+#'
+#' @param data
+#'
+#' @return ggplot
+#' @export
+qwmap <- function(data) {
+
+  if (!inherits(data, "sf")) {
+
+    data <- make_sf_wgs84(data)
+
+  }
+
+  ggplot2::ggplot(data) +
+    ggplot2::borders()+
+    ggplot2::geom_sf(color = "red", shape = 1)+
+    ggplot2::theme_bw()
+
+}
+
+
+# NOTE Pointmap works best with mapview. The leaflet and ggplot version needs additional work
+# It seemed like a good idea to have one function to do all, but the different methods require
+# different data formats, so sf might not always be the way to go
+
+#' Point map
+#'
+#' Can be used with df or sf, and implemented with ggplot, leaflet, and mapview
 #'
 #' @param data dataset
 #' @param ids character colum name to identify ids to plot
@@ -10,72 +88,65 @@
 #'
 #' @return ggplot or leaflet map
 #' @export
-gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = "gg") {
+gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = c("mapview", "leaflet", "ggplot")) {
 
   checkmate::assert_data_frame(data)
-  # checkmate::assert_character(coords, len = 2) #or NULL
 
-  # if (!is.null(ids)) {
-  #   x <- x %>% dplyr::filter(id %in% ids)
-  # }
+  if (!inherits(data, "sf")) {
 
-  if (inherits(data, "sf")) {
-    qwmap <- ggplot2::ggplot(data) +
-      ggplot2::borders()+
-      ggplot2::geom_sf(color = "red", shape = 1)+
-      ggplot2::theme_bw()
+    data <- make_sf_wgs84(data, coords)
 
-    return(qwmap)
   }
 
-  if (!is.null(coords)) {
-    lat_tag <- coords[1]
-    lng_tag <- coords[2]
+  type <- match.arg(type)
 
-  } else {
-    lat_vect <- c("latitude", "lat", "y", "Y")
-    lng_vect <- c("longitude", "lng", "long", "x", "X")
+  if (type == "mapview") {
 
-    lat_tag <- lat_vect[which(lat_vect %in% names(data))[1]]
-    lng_tag <- lng_vect[which(lng_vect %in% names(data))[1]]
-  }
+    if (!is.null(id_col)) {
 
-  data <- data %>% dplyr::rename(latitude = all_of(lat_tag),
-                                 longitude = all_of(lng_tag),
-                                 id_col = {{id_col}})
+      mapview::mapview(iris_sf, zcol = id_col)
 
-  if (type == "leaf") {
+    } else {
+
+      mapview::mapview(data)
+
+    }
+
+  } else if (type == "leaflet") {
+
+    # TODO add color per group, fix id_col
+
     leaflet::leaflet(data = data) %>%
       leaflet::addTiles() %>%
       # leaflet::addProviderTiles("Stamen.Watercolor",
       #                           options = leaflet::providerTileOptions(noWrap = TRUE)) %>%
-      leaflet::addMarkers(lat = ~latitude,
-                          lng = ~longitude,
-                          popup = ~as.character(paste(sep = "", "<b>", "id: ",
-                                                      if (!is.null(id_col)) id_col else "NA",
-                                                      "</b>", "<br/>", "Lat: ",
-                                                      latitude, "<br/>", "Lon: ", longitude)),
-                          clusterOptions = leaflet::markerClusterOptions()) %>%
+      leaflet::addMarkers(
+        # lat = ~latitude,
+        # lng = ~longitude,
+        popup = ~as.character(paste0("<b>", "id: ",
+                                     if (!is.null(id_col)) id_col else "NA",
+                                     "</b>", "<br/>", "Coords: ", geometry)), # How to round geometry
+        clusterOptions = leaflet::markerClusterOptions()) %>%
       leaflet::addScaleBar(position = "topright")
 
-  } else {
 
-    qwmap <- ggplot2::ggplot(data, ggplot2::aes(longitude, latitude)) +
-      ggplot2::borders()+
-      ggplot2::geom_point(color = "darkblue", shape = 1)+
-      ggplot2::coord_fixed()+
-      ggplot2::theme_bw()
+  } else if (type == "ggplot") {
+
+    p <- qwmap(data)
 
     if (!is.null(id_col)) {
-      qwmap +
-        ggrepel::geom_text_repel(ggplot2::aes(label = id_col), color = "blue")
 
+    p +
+      ggplot2::geom_sf_label(aes(label = {{id_col}}))
     } else {
-      qwmap
+      p
 
     }
+
   }
+
 }
+
 
 
 #' Plot point neighborhood from raster
@@ -88,13 +159,18 @@ gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = "gg") {
 #' @export
 #'
 #' @examples gp_point_neibor(point, lcras_ori, 80000)
-gp_point_neighbor <- function(point, ras, dist = 8000) {
+gp_point_ras <- function(point, ras, dist = 8000, type = c("mapview", "ggplot")) {
+
+  if (!inherits(point, "sf")) {
+    point <- gp_make_sf(point)
+  }
+
+  type <- match.arg(type)
 
   # extract cell with buffer
-
   point <- point %>% dplyr::slice(1)
 
-  point <- st_transform(point, crs(ras))
+  point <- sf::st_transform(point, crs(ras))
 
   buff_vals0 <- raster::extract(ras, point, buffer = dist*1.05,
                                 cellnumbers = TRUE, small = TRUE) %>% .[[1]]
@@ -125,14 +201,17 @@ gp_point_neighbor <- function(point, ras, dist = 8000) {
   # subset
   x_sub[is.na(dist_r)] <- NA
 
-  gp_gplot(x_sub)+
-    ggplot2::geom_sf(data = point, inherit.aes = F)
+  if (type == "mapview") {
 
-  # doesn't work well
-  # rasterVis::gplot(x_sub)+
-  #   ggplot2::geom_raster(aes(fill = factor(value)))+
-  #   ggplot2::geom_sf(data = point, inherit.aes = F)+
-  #   ggplot2::scale_fill_discrete(type = "Dark2", na.value = NA)
+    mapview::mapview(x_sub) +
+      mapview::mapview(point)
+
+  } else {
+
+    gp_gplot(x_sub)+
+      ggplot2::geom_sf(data = point, inherit.aes = F)
+
+  }
 
 }
 
@@ -149,10 +228,17 @@ gp_open_gmaps <- function(point){
 
   point <- point %>% slice(1)
 
+  if (!inherits(point, "sf")) {
+
+    # slow, but wtv
+    point <- gp_make_sf(point)
+
+  }
+
   # point %>% st_coordinates %>% rev %>% toString %>% writeClipboard
   # browseURL("https://www.google.com/maps/")
 
-  loc <- point %>% st_coordinates %>% rev
+  loc <- point %>% sf::st_coordinates %>% rev
   browseURL(paste0("https://www.google.com/maps/search/", loc[1], ",", loc[2], "/@", loc[1], ",", loc[2], ",14z"))
 
 }
@@ -186,8 +272,8 @@ gp_gplot <- function(x, maxpixels = 5e+4, filt_val = NULL) { #, ...
   }
 
   ggplot2::ggplot(data=dat, ggplot2::aes(x = x, y = y))+ #, ...
-    geom_raster(aes(fill = value))+
-    scale_fill_viridis_c(na.value = NA)+
-    coord_fixed()
+    ggplot2::geom_raster(ggplot2::aes(fill = value))+
+    ggplot2::scale_fill_viridis_c(na.value = NA)+
+    ggplot2::coord_fixed()
 
 }

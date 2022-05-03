@@ -2,9 +2,14 @@
 % Please edit documentation in R/mapping.R
 \name{gp_pointmap}
 \alias{gp_pointmap}
-\title{Quick world map}
+\title{Point map}
 \usage{
-gp_pointmap(data, id_col = NULL, coords = NULL, type = "gg")
+gp_pointmap(
+  data,
+  id_col = NULL,
+  coords = NULL,
+  type = c("mapview", "leaflet", "ggplot")
+)
 }
 \arguments{
 \item{data}{dataset}
@@ -19,5 +24,5 @@ gp_pointmap(data, id_col = NULL, coords = NULL, type = "gg")
 ggplot or leaflet map
 }
 \description{
-Quick world map
+Can be used with df or sf, and implemented with ggplot, leaflet, and mapview
 }
