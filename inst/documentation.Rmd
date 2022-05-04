@@ -1,6 +1,8 @@
 ---
 title: "Documentation"
-output: html_document
+output: 
+  md_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -130,3 +132,15 @@ list_tmst
 plot_psem  
 plot_lavaan  
 psemtolav
+
+
+```{r eval=FALSE, include=FALSE}
+
+if (file.exists("documentation.md")) {
+
+  fs::file_copy("documentation.md", "../README.md")
+  
+}
+
+```
+
