@@ -142,5 +142,11 @@ if (file.exists("documentation.md")) {
   
 }
 
+library(rmarkdown)
+
+render("documentation.Rmd", md_document(variant = "markdown_github"),
+       "../README2.md")
+
+
 ```
 

@@ -1,10 +1,19 @@
-    library(here)
+``` r
+library(here)
+```
 
     ## here() starts at C:/Users/gp63dyte/Documents/projects/gptools
 
-    library(tidyverse)
+``` r
+library(tidyverse)
+```
 
-    ## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
+    ## Registered S3 methods overwritten by 'dbplyr':
+    ##   method         from
+    ##   print.tbl_lazy     
+    ##   print.tbl_sql
+
+    ## -- Attaching packages ----------------------------------------------------------------------------------------------------- tidyverse 1.3.1 --
 
     ## v ggplot2 3.3.5     v purrr   0.3.4
     ## v tibble  3.1.6     v dplyr   1.0.9
@@ -17,19 +26,23 @@
 
     ## Warning: package 'readr' was built under R version 4.1.3
 
-    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    ## -- Conflicts -------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
-    file <- here("R/misc.R")
-    file.exists(file)
+``` r
+file <- here("R/misc.R")
+file.exists(file)
+```
 
     ## [1] TRUE
 
 ## Scripts
 
-    scripts <- list.files(here("R"))
-    scripts %>% writeLines
+``` r
+scripts <- list.files(here("R"))
+scripts %>% writeLines
+```
 
     ## 00-imports.R
     ## archd_fct.R
@@ -50,10 +63,12 @@
 
 ## Packages used
 
-    pkgs <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("[a-zA-Z_-]*(?=::)") %>% na.omit %>% as.character) %>% unlist %>% 
-      unique %>% sort %>% .[-1]
+``` r
+pkgs <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("[a-zA-Z_-]*(?=::)") %>% na.omit %>% as.character) %>% unlist %>% 
+  unique %>% sort %>% .[-1]
 
-    pkgs %>% writeLines
+pkgs %>% writeLines
+```
 
     ## checkmate
     ## DiagrammeR
@@ -82,10 +97,12 @@
 
 ## Functions
 
-    fcts <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("^.*(?= <- function\\()") %>% na.omit %>% as.character) %>% unlist %>% 
-      .[str_detect(., "^[a-zA-Z]")]
+``` r
+fcts <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("^.*(?= <- function\\()") %>% na.omit %>% as.character) %>% unlist %>% 
+  .[str_detect(., "^[a-zA-Z]")]
 
-    fcts %>% writeLines
+fcts %>% writeLines
+```
 
     ## ad_init
     ## ad_archive
@@ -147,55 +164,55 @@
 
 ### Spatial analysis
 
-extract\_nearest  
-extract\_nearest\_layer  
-extract\_nearest\_value  
+extract_nearest  
+extract_nearest_layer  
+extract_nearest_value  
 splibs  
-make\_grid
+make_grid
 
 ### Mapping
 
-gp\_pointmap  
-gp\_point\_neighbor  
-gp\_open\_gmaps  
-gp\_gplot
+gp_pointmap  
+gp_point_neighbor  
+gp_open_gmaps  
+gp_gplot
 
 ### ggplot helpers
 
-one1\_line  
-plot\_corr  
-gp\_ggaes
+one1_line  
+plot_corr  
+gp_ggaes
 
 ### Compare datasets
 
-comp\_sim\_df  
-comp\_for  
-comp\_btw
+comp_sim_df  
+comp_for  
+comp_btw
 
 ### Flag entries in list-column
 
-make\_flag\_col  
-add\_flag  
-get\_flag
+make_flag_col  
+add_flag  
+get_flag
 
 ### Misc
 
-knit\_w\_tmst  
+knit_w\_tmst  
 coldesc  
 which.nonnum  
 nonumdf  
-gp\_dputran  
-gp\_file\_opened  
-gp\_jobinfo  
-gp\_scale2  
+gp_dputran  
+gp_file_opened  
+gp_jobinfo  
+gp_scale2  
 wrnam  
-mk\_hdr  
-up\_date  
-paste\_na  
-gp\_unwrap  
+mk_hdr  
+up_date  
+paste_na  
+gp_unwrap  
 prinf
 
-### Data archiving (archd\_fct.R)
+### Data archiving (archd_fct.R)
 
 #### ArchD
 
@@ -205,24 +222,24 @@ intermediate versions. It worked quite well, but was possibly overkill
 for most tasks. It was abandoned in favor of a simpler approach
 implemented with file tracking.
 
-Functions: ad\_init, ad\_archive, ad\_save, ad\_to\_date, ad\_lsv,
-default\_fold, mk\_timestamp, same\_file, create\_log, update\_log,
-comp\_dfs, list\_cols\_to\_csv
+Functions: ad_init, ad_archive, ad_save, ad_to_date, ad_lsv,
+default_fold, mk_timestamp, same_file, create_log, update_log, comp_dfs,
+list_cols_to_csv
 
 #### File tracking
 
 saveme  
 ggsaveme  
-record\_meta  
-create\_project\_file\_tracking  
+record_meta  
+create_project_file_tracking  
 tmst  
 ptmst  
 hptmst  
-last\_tmst  
-list\_tmst
+last_tmst  
+list_tmst
 
 ### Data Viz
 
-plot\_psem  
-plot\_lavaan  
+plot_psem  
+plot_lavaan  
 psemtolav
