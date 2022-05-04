@@ -1,8 +1,8 @@
 ---
 title: "Documentation"
-output: 
-  md_document: default
-  pdf_document: default
+output:
+  html_document:
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -46,6 +46,9 @@ fcts <- map(scripts, ~readr::read_lines(here("R", .x)) %>% str_extract("^.*(?= <
   .[str_detect(., "^[a-zA-Z]")]
 
 fcts %>% writeLines
+
+# similar to lsf.str("package:gptools") %>% writeLines
+# or ls("package:gptools")
 
 ```
 

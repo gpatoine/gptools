@@ -60,6 +60,7 @@ if (window.hljs) {
 
 
 
+
 <style type="text/css">
 .main-container {
   max-width: 940px;
@@ -80,6 +81,9 @@ button.code-folding-btn:focus {
 }
 summary {
   display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
 }
 pre code {
   padding: 0;
@@ -173,9 +177,12 @@ pre code {
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
 <pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
-## v tibble  3.1.5     v dplyr   1.0.7
-## v tidyr   1.1.4     v stringr 1.4.0
-## v readr   2.0.2     v forcats 0.5.1</code></pre>
+## v tibble  3.1.6     v dplyr   1.0.9
+## v tidyr   1.2.0     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.3</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.3</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.3</code></pre>
 <pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
@@ -186,7 +193,7 @@ file.exists(file)</code></pre>
 <h2>Scripts</h2>
 <pre class="r"><code>scripts &lt;- list.files(here(&quot;R&quot;))
 scripts %&gt;% writeLines</code></pre>
-<pre><code>## __imports.R
+<pre><code>## 00-imports.R
 ## archd_fct.R
 ## comp_sim_df.R
 ## extract_nearest.R
@@ -202,6 +209,37 @@ scripts %&gt;% writeLines</code></pre>
 ## sem_graphviz.R
 ## timestamps.R
 ## utils-pipe.R</code></pre>
+</div>
+<div id="packages-used" class="section level2">
+<h2>Packages used</h2>
+<pre class="r"><code>pkgs &lt;- map(scripts, ~readr::read_lines(here(&quot;R&quot;, .x)) %&gt;% str_extract(&quot;[a-zA-Z_-]*(?=::)&quot;) %&gt;% na.omit %&gt;% as.character) %&gt;% unlist %&gt;% 
+  unique %&gt;% sort %&gt;% .[-1]
+
+pkgs %&gt;% writeLines</code></pre>
+<pre><code>## checkmate
+## DiagrammeR
+## dplyr
+## gsubfn
+## here
+## leaflet
+## lubridate
+## magrittr
+## mapview
+## purrr
+## raster
+## readr
+## rio
+## rmarkdown
+## rnaturalearth
+## rstudioapi
+## sf
+## stringi
+## stringr
+## tibble
+## tidyr
+## tools
+## utils
+## xfun</code></pre>
 </div>
 <div id="functions" class="section level2">
 <h2>Functions</h2>
@@ -233,9 +271,10 @@ fcts %&gt;% writeLines</code></pre>
 ## one1_line
 ## plot_corr
 ## make_grid
-## splibs
+## make_sf_wgs84
+## qwmap
 ## gp_pointmap
-## gp_point_neighbor
+## gp_point_ras
 ## gp_open_gmaps
 ## gp_gplot
 ## knit_w_tmst
@@ -265,6 +304,7 @@ fcts %&gt;% writeLines</code></pre>
 ## hptmst
 ## last_tmst
 ## list_tmst</code></pre>
+<pre class="r"><code># similar to lsf.str(&quot;package:gptools&quot;) %&gt;% writeLines</code></pre>
 <div id="spatial-analysis" class="section level3">
 <h3>Spatial analysis</h3>
 <p>extract_nearest<br />
