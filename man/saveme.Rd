@@ -4,7 +4,7 @@
 \alias{saveme}
 \title{Save metadata}
 \usage{
-saveme(x, file, comment = NULL, FUN = saveRDS, ovr_today = FALSE, ...)
+saveme(x, file, comment = NULL, FUN = saveRDS, ...)
 }
 \arguments{
 \item{x}{Object to save}

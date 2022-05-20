@@ -4,10 +4,10 @@
 \alias{make_sf_wgs84}
 \title{Create sf object (WGS84) from dataframe}
 \usage{
-make_sf_wgs84(df, coords = NULL)
+make_sf_wgs84(data, coords = NULL)
 }
 \arguments{
-\item{df}{data}
+\item{data}{data}
 
 \item{coords}{cloumn names like c("x", "y")}
 }

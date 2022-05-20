@@ -21,7 +21,7 @@
 #'
 #' @return
 #' @export
-saveme <- function(x, file, comment = NULL, FUN = saveRDS, ovr_today = FALSE, ...) {
+saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) { #ovr_today = FALSE,
 
   obj_name <- deparse(match.call()$x)
 

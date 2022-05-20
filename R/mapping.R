@@ -106,7 +106,7 @@ gp_pointmap <- function(data, id_col = NULL, coords = NULL, type = c("mapview", 
 
     if (!is.null(id_col)) {
 
-      mapview::mapview(iris_sf, zcol = id_col)
+      mapview::mapview(data, zcol = id_col)
 
     } else {
 
