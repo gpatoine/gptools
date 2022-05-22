@@ -13,7 +13,11 @@ Imports:
   checkmate,
   ggrepel,
   magrittr,
-  rasterVis
+  rasterVis,
+  knitr,
+  markdown,
+  xfun,
+  rstudioapi
 Depends:
   tools,
   tidyverse,
