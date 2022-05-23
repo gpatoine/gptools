@@ -30,6 +30,7 @@ knit_w_tmst <- function(input, ...) {
 #' html report to a stitch folder in the project.
 #'
 #' NOTE there's something weird happening with the title, but whatever.
+#' could use envir = new.env() in case there's an issue, but then might miss things from Rprofile
 #'
 #' @param script Path to the R script. Default is the current document.
 #' @param template Path of the template to use. By default, the Rnw template in
@@ -38,23 +39,37 @@ knit_w_tmst <- function(input, ...) {
 #'   the base filename of the script is used. @param template
 #' @param text see knitr
 #' @param envir see knitr
+#' @param rm_view don't run View function calls
 #'
 #' @return output path
 #' @export
 gp_stitch <- function(script = NULL,
                       template = system.file("misc", "knitr-template.Rmd", package = "knitr"),
-                      output = NULL, text = NULL, envir = parent.frame()) {
+                      output = NULL, text = NULL, envir = parent.frame(),
+                      rm_view = TRUE) {
+
+  # NOTE the Rhtml template also works
+
+  # cancel View: bit challenging to do, using tibble::view in scripts instead
+  # won't work cause knitted documents have interactive() == TRUE
+  # Could also be replace by print or somethinggit status
+  if(rm_view) {
+    assign("View", function(...) invisible(NULL), envir = parent.frame())
+    on.exit(rm(View, envir = parent.frame()))
+  }
 
   if (is.null(script) && interactive() && !is.null(rstudioapi::documentPath())) {
     script <- rstudioapi::documentPath()
   }
+
+  tmpdir <- tempdir() # do I need to delete it manually after?
 
   lines = if (nosrc <- is.null(text)) xfun::read_utf8(script) else knitr::split_lines(text)
 
   if (knitr:::comment_to_var(lines[1L], ".knitr.title", "^#+ *title:", envir)) lines = lines[-1L]
   if (knitr:::comment_to_var(lines[1L], ".knitr.author", "^#+ *author:", envir)) lines = lines[-1L]
   input = basename(template)
-  input = xfun::with_ext(basename(if (nosrc) script else tempfile()), file_ext(input))
+  input = xfun::with_ext(basename(if (nosrc) script else tempfile()), xfun::file_ext(input))
   txt = xfun::read_utf8(template)
   i = grep("%sCHUNK_LABEL_HERE", txt)
   if (length(i) != 1L) stop("Wrong template for stitch: ", template)
@@ -69,7 +84,8 @@ gp_stitch <- function(script = NULL,
   txt[i] = knitr:::one_string(lines)
   knitr::opts_chunk$set(
     fig.align = "center", par = TRUE, fig.width = 6, fig.height = 6,
-    fig.path = paste(here("stitch/figure"), gsub("[^[:alnum:]]", "-", input), sep = "/") # changed fig path
+    # fig.path = here("stitch/figure", gsub("[^[:alnum:]]", "-", input)) # changed fig path
+    fig.path = file.path(tmpdir, "figure")
   )
 
   on.exit(knitr::opts_chunk$restore(), add = TRUE)
@@ -78,17 +94,22 @@ gp_stitch <- function(script = NULL,
                     mgp = c(2, 0.7, 0), tcl = -0.3, las = 1)
   })
   on.exit(knitr::knit_hooks$restore(), add = TRUE)
-  out = knitr::knit(input, hptmst("stitch", tools::file_path_sans_ext(basename(input)), "md"), envir = envir, text = txt) #changed output path
-  switch(file_ext(out), tex = {
-    tinytex::latexmk(out)
-    message("PDF output at: ", with_ext(out, "pdf"))
-  }, md = {
-    out.html = xfun::with_ext(out, "html")
-    markdown::markdownToHTML(out, out.html)
-    message("HTML output at: ", out.html)
-  })
+  # out = knitr::knit(input, hptmst("stitch", tools::file_path_sans_ext(basename(input)), "md"), envir = envir, text = txt) #changed output path
+  out = knitr::knit(input, file.path(tmpdir, xfun::with_ext(basename(input), "md")), envir = envir, text = txt)
+
+  # switch(file_ext(out), tex = {
+  #   tinytex::latexmk(out)
+  #   message("PDF output at: ", with_ext(out, "pdf"))
+  # }, md = {
+  # out.html = xfun::with_ext(out, "html")
+  out.html = hptmst("stitch", tools::file_path_sans_ext(basename(input)), "html")
+  markdown::markdownToHTML(out, out.html)
+  message("HTML output at: ", out.html)
+  # })
+
   invisible(out.html)
 }
+
 
 
 

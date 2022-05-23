@@ -9,7 +9,8 @@ gp_stitch(
   template = system.file("misc", "knitr-template.Rmd", package = "knitr"),
   output = NULL,
   text = NULL,
-  envir = parent.frame()
+  envir = parent.frame(),
+  rm_view = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ the base filename of the script is used. @param template}
 \item{text}{see knitr}
 
 \item{envir}{see knitr}
+
+\item{rm_view}{don't run View function calls}
 }
 \value{
 output path
@@ -37,4 +40,5 @@ html report to a stitch folder in the project.
 }
 \details{
 NOTE there's something weird happening with the title, but whatever.
+could use envir = new.env() in case there's an issue, but then might miss things from Rprofile
 }
