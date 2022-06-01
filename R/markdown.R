@@ -52,7 +52,7 @@ gp_stitch <- function(script = NULL,
 
   # cancel View: bit challenging to do, using tibble::view in scripts instead
   # won't work cause knitted documents have interactive() == TRUE
-  # Could also be replace by print or somethinggit status
+  # Could also be replace by print or something
   if(rm_view) {
     assign("View", function(...) invisible(NULL), envir = parent.frame())
     on.exit(rm(View, envir = parent.frame()))
