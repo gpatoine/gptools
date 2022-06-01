@@ -84,7 +84,7 @@ gp_stitch <- function(script = NULL,
   txt[i] = knitr:::one_string(lines)
   knitr::opts_chunk$set(
     fig.align = "center", par = TRUE, fig.width = 6, fig.height = 6,
-    # fig.path = here("stitch/figure", gsub("[^[:alnum:]]", "-", input)) # changed fig path
+    # fig.path = here::here("stitch/figure", gsub("[^[:alnum:]]", "-", input)) # changed fig path
     fig.path = file.path(tmpdir, "figure")
   )
 
@@ -102,6 +102,8 @@ gp_stitch <- function(script = NULL,
   #   message("PDF output at: ", with_ext(out, "pdf"))
   # }, md = {
   # out.html = xfun::with_ext(out, "html")
+
+  if (!dir.exists(here::here("stitch"))) dir.create(here::here("stitch"))
   out.html = hptmst("stitch", tools::file_path_sans_ext(basename(input)), "html")
   markdown::markdownToHTML(out, out.html)
   message("HTML output at: ", out.html)

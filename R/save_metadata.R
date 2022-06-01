@@ -169,13 +169,13 @@ record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 #' @export
 create_project_file_tracking <- function(dir = NULL, add_profile = FALSE) {
 
-  ft_path <- here(paste0(dir, "project_file_tracking.csv"))
+  ft_path <- here::here(paste0(dir, "project_file_tracking.csv"))
 
   if (file.exists(ft_path)) {
     stop(paste0(ft_path, " exists already. Delete it first to create a new one."))
   }
 
-  tib <- tibble(
+  tib <- dplyr::tibble(
     date = NA,
     time = NA,
     basename = NA,
@@ -189,7 +189,7 @@ create_project_file_tracking <- function(dir = NULL, add_profile = FALSE) {
     full_path = NA
   ) %>% slice(0)
 
-  write_csv(tib, ft_path)
+  readr::write_csv(tib, ft_path)
 
   if (add_profile & !is.null(dir)) {
 

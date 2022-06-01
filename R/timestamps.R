@@ -58,7 +58,7 @@ ptmst <- function(main, ext, ...) {
 #' @export
 hptmst <- function(dir, main, ext, ...) {
 
-  here(dir, paste0(main, tmst(ext, ...)))
+  here::here(dir, paste0(main, tmst(ext, ...)))
 
 }
 
