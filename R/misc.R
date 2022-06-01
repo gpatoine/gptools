@@ -357,3 +357,14 @@ prinf <- function(x) {
 
 }
 
+#' update gptools package
+#'
+#' Having a fct for that was probably unnecessary, but why not?
+#'
+#' @return dunno
+#' @export
+gp_uppck <- function() {
+
+  remotes::install_github("gpatoine/gptools")
+
+}

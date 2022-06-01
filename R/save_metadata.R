@@ -30,6 +30,8 @@ saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) { #ovr_today = F
 
   FUN(x, file, ...)
 
+  message("Size: ", fs::file_size(file))
+
   # TODO check if previous file exists and overwrite from today
   # actually not sure how to do that
 
