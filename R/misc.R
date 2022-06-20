@@ -368,3 +368,75 @@ gp_uppck <- function() {
   remotes::install_github("gpatoine/gptools")
 
 }
+
+
+#' Check if integer
+#'
+#' See is.wholenumber in http://web.mit.edu/~r/current/lib/R/library/base/html/integer.html
+#'
+#' @param x numeric
+#' @param tol tolerance
+#'
+#' @return boolean
+#' @export
+is_whole <- function(x, tol = .Machine$double.eps^0.5) {
+  abs(x - round(x)) < tol
+}
+
+
+#' R-squared
+#'
+#' @param predicted vector
+#' @param observed vector
+#'
+#' @return numeric
+#' @export
+gp_r2 <- function(predicted, observed){
+  return(1- sum((predicted - observed) ^ 2)/sum((observed - mean(observed))^2))
+}
+
+
+#' Open PDF in Foxit with no lock
+#'
+#' https://kb.foxitsoftware.com/hc/en-us/articles/360040661611-How-to-make-Foxit-PhantomPDF-Foxit-Reader-not-lock-PDF-file-when-open-it
+#'
+#' @param path path
+#'
+#' @return system
+#' @export
+foxit <- function(path) {
+
+  command <- paste0('"C:/Program Files (x86)/Foxit Software/Foxit PDF Reader/FoxitPDFReader.exe" "', path, '" /A nolock=1')
+  system(command)
+
+}
+
+
+#' @title Quote Words
+#'
+#' @description
+#' \code{qw} Takes an unquoted vector and adds quotes to it like the qw function in perl.
+#'
+#' @details This is a helper function for data processing. Honestly, I use qw all the time
+#' in other languages, and wanted a version for R. Taken from jebyrnes/multifunc
+#'
+#' @author Jarrett Byrnes.
+#' @param ... Any unquoted strings
+#'
+#'
+#' @export
+#' @return A vector
+#'
+#' @examples
+#' c("a", "b")
+#'
+#' qw(a, b)
+#'
+#'
+#'
+#' # qw - a helper function that we
+#' # will use later to deal with strings
+#' # analagous to qw in PERL
+qw <- function(...) {
+  sapply(match.call()[-1], deparse)
+}

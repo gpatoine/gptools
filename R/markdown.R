@@ -83,7 +83,8 @@ gp_stitch <- function(script = NULL,
   }
   txt[i] = knitr:::one_string(lines)
   knitr::opts_chunk$set(
-    fig.align = "center", par = TRUE, fig.width = 6, fig.height = 6,
+    fig.align = "center", par = TRUE, fig.width = 9, fig.height = 7,
+    # out.width="80%",
     # fig.path = here::here("stitch/figure", gsub("[^[:alnum:]]", "-", input)) # changed fig path
     fig.path = file.path(tmpdir, "figure")
   )
