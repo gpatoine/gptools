@@ -440,3 +440,22 @@ foxit <- function(path) {
 qw <- function(...) {
   sapply(match.call()[-1], deparse)
 }
+
+
+
+#' ignore
+#'
+#' Can be used to mute view in script (e.g. for sourcing), or comment
+#' out a block of code.
+#'
+#' @param ... expression
+#'
+#' @return NULL
+#' @export
+#'
+#' @examples view <- ignore
+#' ignore({ expr })
+#'
+ignore <- function(...) {
+  invisible(NULL)
+}

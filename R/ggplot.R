@@ -133,3 +133,34 @@ pspls <- function(data, col) {
     ggplot(aes_string("index", col))+
     geom_point(alpha = 0.5)
 }
+
+
+#' Export report
+#'
+#' Mostly for internal use. Does the page layout and exports figures.
+#'
+#' @param plots list of ggplots
+#' @param file path
+#' @param plots_per_page 24
+#'
+#' @return NULL
+#' @export
+#' @importFrom ggplot2 ggsave
+export_report <- function(plots, file, plots_per_page = 24) {
+
+  pl_c <- floor(sqrt(plots_per_page * 0.75))
+
+  pl_r <- plots_per_page / pl_c
+
+  splots <- split(plots, ceiling(seq_along(plots)/plots_per_page))
+
+  sp2 <- purrr::map(splots, ~ cowplot::plot_grid(plotlist = .x, nrow = pl_r, ncol = pl_c))
+
+  ggplot2::ggsave(filename = file,
+         plot = gridExtra::marrangeGrob(grobs = sp2, nrow=1, ncol=1, left = "BAS", bottom = "time"),
+         width = 210, height = 297,
+         units = "mm")
+
+  NULL
+
+}
