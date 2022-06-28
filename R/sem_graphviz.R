@@ -7,6 +7,14 @@
 # The functions need to be changed if you want a specific output format (color, shapes, etc.).
 
 
+#' PSEM plot
+#'
+#' @param model from psem
+#' @param layout "dot" or "neato"
+#' @param render boolean
+#'
+#' @return ?
+#' @export
 plot_psem <- function(model, layout = "dot", render = TRUE){
 
   #function defaults for plotting
@@ -135,6 +143,15 @@ plot_psem <- function(model, layout = "dot", render = TRUE){
   }
 }
 
+
+#' Lavaan plot
+#'
+#' @param model summary of the fit from lavaan
+#' @param layout esthetics
+#' @param render boolean
+#'
+#' @return ?
+#' @export
 plot_lavaan <- function(model, layout = "dot", render = TRUE){
 
   #function defaults for plotting
@@ -178,7 +195,7 @@ plot_lavaan <- function(model, layout = "dot", render = TRUE){
 
   # make an edges DF --------------------------------------------------------
 
-  edges <- create_edge_df(
+  edges <- DiagrammeR::create_edge_df(
     from = match(ctab$Predictor, unique_nodes),
     to = match(ctab$Response, unique_nodes),
     type = ctab$type,
@@ -260,7 +277,13 @@ plot_lavaan <- function(model, layout = "dot", render = TRUE){
 }
 
 
-#helps to transform psem code to lavaan
+#' Helps to transform psem code to lavaan
+#'
+#' @param string psem code
+#' @param data data
+#'
+#' @return character
+#' @export
 psemtolav <- function(string, data){
   string %>%
     stringr::str_remove_all(pattern = "lm\\(") %>%
