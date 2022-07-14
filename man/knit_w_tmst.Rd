@@ -16,4 +16,6 @@ not sure
 }
 \description{
 inspired by https://bookdown.org/yihui/rmarkdown-cookbook/custom-knit.html
+This is to be used in the yaml of a Rmarkdown document with argument
+knit: gptools::knit_w_tmst
 }

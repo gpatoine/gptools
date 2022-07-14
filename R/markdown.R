@@ -4,6 +4,8 @@
 #' Knit with timestamp
 #'
 #' inspired by https://bookdown.org/yihui/rmarkdown-cookbook/custom-knit.html
+#' This is to be used in the yaml of a Rmarkdown document with argument
+#' knit: gptools::knit_w_tmst
 #'
 #' @param input input
 #' @param ... not used
@@ -115,6 +117,44 @@ gp_stitch <- function(script = NULL,
 
 
 
+#' Like coldesc for DT rendering in markdown
+#'
+#' @param df data
+#'
+#' @return DT
+#' @export
+coldesc_dt <- function(df) {
 
+
+  make_range <- function(x) {
+    if (inherits(x, c("numeric", "integer"))) {
+      paste0(signif(range(x, na.rm = TRUE), digits = 4),
+             collapse = " - ")
+    }
+    else if (inherits(x, c("factor", "character"))) {
+      paste(length(unique(x)), "levels")
+    }
+    else if (inherits(x, "Date")) {
+      paste(range(x), collapse = " to ")
+    }
+    else {
+      NA
+    }
+  }
+  meta <- dplyr::tibble(Column_names = names(df), Dataclass = purrr::map_chr(df,
+                                                                             ~toString(class(.x))), Range = purrr::map_chr(df, make_range),
+                        Perc_complete = round(colSums(!is.na(df))/nrow(df) *
+                                                100, 1))
+
+  meta %>% DT::datatable(options = list(
+    pageLength = nrow(.),
+    dom = "t"
+  )) %>%  DT::formatStyle("Perc_complete",
+                      background = DT::styleColorBar(c(0,100), 'lightblue'),
+                      backgroundSize = '98% 80%',
+                      backgroundRepeat = 'no-repeat',
+                      backgroundPosition = 'center')
+
+}
 
 
