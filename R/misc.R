@@ -459,3 +459,74 @@ qw <- function(...) {
 ignore <- function(...) {
   invisible(NULL)
 }
+
+
+
+#' Make correlation plot
+#'
+#' Only numeric columns are retained
+#'
+#' @param df data with numeric columns
+#'
+#' @return NULL
+#' @export
+show_cor <- function(df) {
+
+  df <- df %>% select(where(is.numeric))
+
+  M = cor(df, use = "pairwise.complete")
+  testRes = cor.mtest(df, conf.level = 0.95)
+
+  # df %>% cor(use = "pairwise.complete") %>%
+
+  corrplot::corrplot(M,
+                     p.mat = testRes$p,
+                     method = "color",
+                     type = "upper",
+                     addCoef.col = "black",
+
+                     addCoefasPercent = T,
+                     diag = F,
+                     insig = "blank",
+                     # sig.level = c(0.001, 0.01, 0.05),
+                     pch.cex = 0.5, number.cex = 0.8,
+
+                     # insig = 'label_sig', pch.col = 'grey20',
+                     tl.col = "black"
+  )
+
+}
+
+
+#' Make heat map
+#'
+#' @param df data
+#' @param rows character of column names
+#'
+#' @return NULL
+#' @export
+show_heat <- function(df, rows) {
+
+  df <- df %>% select(where(is.numeric))
+
+  M = cor(df, use = "pairwise.complete")
+  testRes = cor.mtest(df, conf.level = 0.95)
+
+  M <- M[rows, !colnames(M) %in% rows]
+  testResp <- testRes$p[rows, !colnames(testRes$p) %in% rows]
+
+  corrplot::corrplot(M,
+                     p.mat = testResp,
+                     method = "color",
+                     addCoef.col = "black",
+                     addgrid.col = "black",
+                     addCoefasPercent = T,
+                     insig = "blank",
+                     # sig.level = c(0.001, 0.01, 0.05),
+                     pch.cex = 0.5, number.cex = 0.8,
+
+                     # insig = 'label_sig', pch.col = 'grey20',
+                     tl.col = "black"
+  )
+
+}
