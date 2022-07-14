@@ -477,20 +477,17 @@ show_cor <- function(df) {
   M = cor(df, use = "pairwise.complete")
   testRes = cor.mtest(df, conf.level = 0.95)
 
-  # df %>% cor(use = "pairwise.complete") %>%
-
   corrplot::corrplot(M,
                      p.mat = testRes$p,
                      method = "color",
                      type = "upper",
                      addCoef.col = "black",
-
+                     addgrid.col = "black",
                      addCoefasPercent = T,
                      diag = F,
                      insig = "blank",
-                     # sig.level = c(0.001, 0.01, 0.05),
+                     sig.level = c(0.001, 0.01, 0.05),
                      pch.cex = 0.5, number.cex = 0.8,
-
                      # insig = 'label_sig', pch.col = 'grey20',
                      tl.col = "black"
   )
