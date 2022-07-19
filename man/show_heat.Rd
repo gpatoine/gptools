@@ -12,5 +12,5 @@ show_heat(df, rows)
 \item{rows}{character of column names}
 }
 \description{
-Make heat map
+Specify rows, columns will be all other numeric columns
 }

@@ -10,5 +10,5 @@ show_cor(df)
 \item{df}{data with numeric columns}
 }
 \description{
-Only numeric columns are retained
+Only numeric columns are kept
 }

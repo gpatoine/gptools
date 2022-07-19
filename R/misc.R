@@ -464,7 +464,7 @@ ignore <- function(...) {
 
 #' Make correlation plot
 #'
-#' Only numeric columns are retained
+#' Only numeric columns are kept
 #'
 #' @param df data with numeric columns
 #'
@@ -475,7 +475,7 @@ show_cor <- function(df) {
   df <- df %>% select(where(is.numeric))
 
   M = cor(df, use = "pairwise.complete")
-  testRes = cor.mtest(df, conf.level = 0.95)
+  testRes = corrplot::cor.mtest(df, conf.level = 0.95)
 
   corrplot::corrplot(M,
                      p.mat = testRes$p,
@@ -497,6 +497,8 @@ show_cor <- function(df) {
 
 #' Make heat map
 #'
+#' Specify rows, columns will be all other numeric columns
+#'
 #' @param df data
 #' @param rows character of column names
 #'
@@ -507,7 +509,7 @@ show_heat <- function(df, rows) {
   df <- df %>% select(where(is.numeric))
 
   M = cor(df, use = "pairwise.complete")
-  testRes = cor.mtest(df, conf.level = 0.95)
+  testRes = corrplot::cor.mtest(df, conf.level = 0.95)
 
   M <- M[rows, !colnames(M) %in% rows]
   testResp <- testRes$p[rows, !colnames(testRes$p) %in% rows]
@@ -521,7 +523,6 @@ show_heat <- function(df, rows) {
                      insig = "blank",
                      # sig.level = c(0.001, 0.01, 0.05),
                      pch.cex = 0.5, number.cex = 0.8,
-
                      # insig = 'label_sig', pch.col = 'grey20',
                      tl.col = "black"
   )
