@@ -486,7 +486,7 @@ show_cor <- function(df) {
                      addCoefasPercent = T,
                      diag = F,
                      insig = "blank",
-                     sig.level = c(0.001, 0.01, 0.05),
+                     # sig.level = c(0.001, 0.01, 0.05), # think not needed...
                      pch.cex = 0.5, number.cex = 0.8,
                      # insig = 'label_sig', pch.col = 'grey20',
                      tl.col = "black"
@@ -525,5 +525,19 @@ show_heat <- function(df, rows) {
                      # insig = 'label_sig', pch.col = 'grey20',
                      tl.col = "black"
   )
+
+}
+
+
+
+#' Rescale between 0 and 1
+#'
+#' @param numeric
+#'
+#' @return numeric
+#' @export
+range01 <- function(x) {
+
+  (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
 
 }

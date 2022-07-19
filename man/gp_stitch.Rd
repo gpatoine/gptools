@@ -41,4 +41,6 @@ html report to a stitch folder in the project.
 \details{
 NOTE there's something weird happening with the title, but whatever.
 could use envir = new.env() in case there's an issue, but then might miss things from Rprofile
+
+if using text, can paste expression as text using r'()'
 }

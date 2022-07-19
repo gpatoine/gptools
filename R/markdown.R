@@ -34,6 +34,8 @@ knit_w_tmst <- function(input, ...) {
 #' NOTE there's something weird happening with the title, but whatever.
 #' could use envir = new.env() in case there's an issue, but then might miss things from Rprofile
 #'
+#' if using text, can paste expression as text using r'()'
+#'
 #' @param script Path to the R script. Default is the current document.
 #' @param template Path of the template to use. By default, the Rnw template in
 #'   this package; there is also an HTML template in \pkg{knitr}.
@@ -58,6 +60,9 @@ gp_stitch <- function(script = NULL,
   if(rm_view) {
     assign("View", function(...) invisible(NULL), envir = parent.frame())
     on.exit(rm(View, envir = parent.frame()))
+
+    assign("view", function(...) invisible(NULL), envir = parent.frame())
+    on.exit(rm(view, envir = parent.frame()))
   }
 
   if (is.null(script) && interactive() && !is.null(rstudioapi::documentPath())) {
@@ -66,10 +71,12 @@ gp_stitch <- function(script = NULL,
 
   tmpdir <- tempdir() # do I need to delete it manually after?
 
-  lines = if (nosrc <- is.null(text)) xfun::read_utf8(script) else knitr::split_lines(text)
+  lines = if (nosrc <- is.null(text)) xfun::read_utf8(script) else xfun::split_lines(text)
 
-  if (knitr:::comment_to_var(lines[1L], ".knitr.title", "^#+ *title:", envir)) lines = lines[-1L]
-  if (knitr:::comment_to_var(lines[1L], ".knitr.author", "^#+ *author:", envir)) lines = lines[-1L]
+  # think these are not needed
+  # if (knitr:::comment_to_var(lines[1L], ".knitr.title", "^#+ *title:", envir)) lines = lines[-1L]
+  # if (knitr:::comment_to_var(lines[1L], ".knitr.author", "^#+ *author:", envir)) lines = lines[-1L]
+
   input = basename(template)
   input = xfun::with_ext(basename(if (nosrc) script else tempfile()), xfun::file_ext(input))
   txt = xfun::read_utf8(template)
@@ -80,7 +87,7 @@ gp_stitch <- function(script = NULL,
   if (length(j) == 0) {
     lines = c(sprintf(h, "auto-report"), lines)
   }  else {
-    lines[j] = sprintf(h, gsub(.sep.label, "\\3", lines[j]))
+    lines[j] = sprintf(h, gsub(knitr:::.sep.label, "\\3", lines[j]))
     if (j[1] != 1L) lines = c(sprintf(h, ""), lines)
   }
   txt[i] = knitr:::one_string(lines)
@@ -107,6 +114,16 @@ gp_stitch <- function(script = NULL,
   # out.html = xfun::with_ext(out, "html")
 
   if (!dir.exists(here::here("stitch"))) dir.create(here::here("stitch"))
+
+  if (!nosrc) {
+    input <-
+      if (interactive() && !is.null(rstudioapi::documentPath())) {
+        paste0("this_", basename(rstudioapi::documentPath()))
+      } else {
+        "this"
+      }
+  }
+
   out.html = hptmst("stitch", tools::file_path_sans_ext(basename(input)), "html")
   markdown::markdownToHTML(out, out.html)
   message("HTML output at: ", out.html)
@@ -114,6 +131,7 @@ gp_stitch <- function(script = NULL,
 
   invisible(out.html)
 }
+
 
 
 
@@ -148,13 +166,13 @@ coldesc_dt <- function(df) {
 
   meta %>% DT::datatable(options = list(
     pageLength = nrow(.),
-    dom = "t"
-  )) %>%  DT::formatStyle("Perc_complete",
+    dom = "t",
+    # https://github.com/rstudio/DT/issues/732
+    columnDefs = list(list(orderable = TRUE, targets = 0)))) %>%
+    DT::formatStyle("Perc_complete",
                       background = DT::styleColorBar(c(0,100), 'lightblue'),
                       backgroundSize = '98% 80%',
                       backgroundRepeat = 'no-repeat',
                       backgroundPosition = 'center')
 
 }
-
-
