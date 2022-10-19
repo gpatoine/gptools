@@ -277,7 +277,7 @@ gp_ext_buff <- function(points, rast, dist, coverage = 0.4, fct = median) {
   ext <- exactextractr::exact_extract(rast, df_buff)
 
   ext <- purrr::map(ext, ~ dplyr::filter(.x, coverage_fraction > 0.4))
-  ext <- ext %>% purrr:map(~ .x %>% dplyr::select(-coverage_fraction))
+  ext <- ext %>% purrr::map(~ .x %>% dplyr::select(-coverage_fraction))
 
   print(purrr::map_dbl(ext, nrow) %>% spl + ggplot2::ylim(0,NA))
 
