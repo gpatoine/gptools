@@ -17,9 +17,6 @@ saveme(x, file, comment = NULL, FUN = saveRDS, ...)
 
 \item{...}{additional arguments passed to FUN}
 }
-\value{
-
-}
 \description{
 Wrapper function that saves an object using FUN and related metadata.
 Supported functions include saveRDS(), write_csv() and write_excel_csv().

@@ -15,9 +15,6 @@ record_meta(x, file, comment = NULL, obj_name = NULL)
 
 \item{obj_name}{only used if called internally}
 }
-\value{
-
-}
 \description{
 Writes metadata to CSV file located in archd project folder. Tracks changes.
 }

@@ -13,9 +13,6 @@ add_flag(df, id, new_flag)
 
 \item{new_flag}{}
 }
-\value{
-
-}
 \description{
 Only to be used with Cmic dataset with a New_ID column
 }

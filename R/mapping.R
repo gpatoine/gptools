@@ -203,7 +203,7 @@ gp_point_ras <- function(point, ras, dist = 8000, type = c("mapview", "ggplot"))
 
   # subset raster
   x_sub <- raster::rasterFromCells(ras, buff_vals$cell)
-  x_sub[] <- ras[values(x_sub)]
+  x_sub[] <- ras[raster::values(x_sub)]
 
   # remove too far cells
   # need to transform, raster doesn't by itself
@@ -275,7 +275,7 @@ gp_gplot <- function(x, maxpixels = 5e+4, filt_val = NULL) { #, ...
   x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
 
   coords <- xyFromCell(x, seq_len(ncell(x)))
-  dat <- utils::stack(as.data.frame(values(x)))
+  dat <- utils::stack(as.data.frame(raster::values(x)))
   names(dat) <- c('value', 'variable')
   dat <- cbind(coords, dat)
   # dat$value %>% unique

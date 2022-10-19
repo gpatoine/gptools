@@ -15,9 +15,6 @@ ggsaveme(filename, plot = NULL, comment = NULL, ...)
 
 \item{...}{additional arguments passed to ggsave}
 }
-\value{
-
-}
 \description{
 Source is empty if the function was called from an unsaved script.
 }

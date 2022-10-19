@@ -17,7 +17,8 @@ Imports:
   knitr,
   markdown,
   xfun,
-  rstudioapi
+  rstudioapi,
+  exactextractr
 Depends:
   tools,
   tidyverse,
@@ -33,4 +34,4 @@ Suggests:
   rstudioapi,
   utils,
   xfun
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1

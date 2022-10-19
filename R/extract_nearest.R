@@ -32,11 +32,11 @@ extract_nearest <- function(x, y, max_range = NULL, .as_na = NULL) {
   }
 
   # dispatch depending n layers
-  if (class(x) == "RasterLayer") {
+  if (inherits(x, "RasterLayer")) {
     vals <- extract_nearest_layer(x, y = uni_loc, max_range, .as_na)
     vals <- data.frame(vals)
 
-  } else if (class(x) %in% c("RasterBrick", "RasterStack")) {
+  } else if (inherits(x, c("RasterBrick", "RasterStack"))) {
     xus <- unstack(x)
     vals <- purrr::map_dfc(xus, ~ {cat("\n"); print(.x);
       extract_nearest_layer(.x, y = uni_loc, max_range, .as_na)})
@@ -156,7 +156,7 @@ extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
       data.frame(near_val = NA,
                  dist_cell = NA)
     } else {
-      if (class(buff_vals0) == "numeric") {
+      if (inherits(buff_vals0, "numeric")) {
         data.frame(as.list(buff_vals0))
       } else {
         as.data.frame(buff_vals0)
@@ -259,3 +259,29 @@ extract_nearest_value <- function(x, point, max_range = NULL, .as_na = NULL) {
 # ext_st0 <- raster::extract(x = st, y = cmic2, df = TRUE)
 
 
+
+#' Extract buffer, return 1 value
+#'
+#' @param points sf point object
+#' @param rast raster* object
+#' @param dist distance
+#' @param coverage defaults to 0.4
+#' @param fct median
+#'
+#' @return extracted and merged values
+#' @export
+gp_ext_buff <- function(points, rast, dist, coverage = 0.4, fct = median) {
+
+  df_buff <- points %>% sf::st_buffer(dist)
+
+  ext <- exactextractr::exact_extract(rast, df_buff)
+
+  ext <- purrr::map(ext, ~ dplyr::filter(.x, coverage_fraction > 0.4))
+  ext <- ext %>% purrr:map(~ .x %>% dplyr::select(-coverage_fraction))
+
+  print(purrr::map_dbl(ext, nrow) %>% spl + ggplot2::ylim(0,NA))
+
+  ext_medians <- purrr::map_dfr(ext, ~ purrr::map_dbl(.x, ~ fct(.x, na.rm = TRUE)))
+  ext_medians %>% purrr::set_names(names(rast))
+
+}

@@ -12,7 +12,7 @@ repl_dict(x, dict)
 \item{dict}{list?}
 }
 \value{
-
+terms
 }
 \description{
 dictionary of terms to replace

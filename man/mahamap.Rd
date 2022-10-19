@@ -11,9 +11,6 @@ mahamap(dat, xy = c("X", "Y"))
 
 \item{xy}{coordinate columns}
 }
-\value{
-
-}
 \description{
 Make a mahalanobis map
 }

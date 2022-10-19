@@ -54,7 +54,7 @@ ptmst <- function(main, ext, ...) {
 #' @param ext character
 #' @param ... passed to tmst
 #'
-#' @return
+#' @return dunno
 #' @export
 hptmst <- function(dir, main, ext, ...) {
 

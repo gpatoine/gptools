@@ -11,9 +11,6 @@ get_flag(df, id)
 
 \item{id}{id}
 }
-\value{
-
-}
 \description{
 get_flag
 }

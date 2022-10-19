@@ -9,9 +9,6 @@ make_flag_col(df)
 \arguments{
 \item{df}{}
 }
-\value{
-
-}
 \description{
 make_flag_col
 }

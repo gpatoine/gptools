@@ -13,9 +13,6 @@ ad_lsv(file, fold_path = default_fold(file), look_back = 0)
 
 \item{look_back}{positive integer. zero is the lsv, higher numbers for earlier versions}
 }
-\value{
-
-}
 \description{
 returns version name
 }

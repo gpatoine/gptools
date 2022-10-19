@@ -12,7 +12,7 @@ nonumdf(df, cols = seq_along(df))
 \item{cols}{col number?}
 }
 \value{
-
+df?
 }
 \description{
 nonumdf

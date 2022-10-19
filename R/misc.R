@@ -22,7 +22,7 @@ which.nonnum <- function(x) {
 #' @param df data.frame
 #' @param cols col number?
 #'
-#' @return
+#' @return df?
 #' @export
 nonumdf <- function(df, cols = seq_along(df)){
   #df = fv1
@@ -62,7 +62,7 @@ nonumdf <- function(df, cols = seq_along(df)){
 #' @param x object
 #' @param dict list?
 #'
-#' @return
+#' @return terms
 #' @export
 repl_dict <- function (x, dict) {
 
@@ -86,7 +86,7 @@ check_modif <- function (col1, col2) {
 #'
 #' @param x
 #'
-#' @return
+#' @return numbers
 #' @export
 gp_dputran <- function(x) {
   sx <- sort(x) %>% unique
@@ -176,7 +176,7 @@ gp_jobinfo <- function() {
 #' @param x numeric vector to scale
 #' @param na.rm logical
 #'
-#' @return
+#' @return numbers
 #' @export
 gp_scale2 <- function(x, na.rm = FALSE) {
   (x - mean(x, na.rm = na.rm)) / sd(x, na.rm)

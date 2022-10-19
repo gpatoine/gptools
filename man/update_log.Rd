@@ -13,9 +13,6 @@ update_log(file, fold_path, method = NA)
 
 \item{method}{chr}
 }
-\value{
-
-}
 \description{
 update_log
 }

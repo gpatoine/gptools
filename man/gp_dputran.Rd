@@ -10,7 +10,7 @@ gp_dputran(x)
 \item{x}{}
 }
 \value{
-
+numbers
 }
 \description{
 dput with integer ranges

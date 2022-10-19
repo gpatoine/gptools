@@ -11,9 +11,6 @@ create_log(file, ts_path)
 
 \item{ts_path}{chr path}
 }
-\value{
-
-}
 \description{
 create_log
 }

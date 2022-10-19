@@ -12,7 +12,7 @@ gp_scale2(x, na.rm = FALSE)
 \item{na.rm}{logical}
 }
 \value{
-
+numbers
 }
 \description{
 Same as scale but works with vectors, not matrices, and therefore with mutate

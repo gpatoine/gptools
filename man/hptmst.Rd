@@ -16,7 +16,7 @@ hptmst(dir, main, ext, ...)
 \item{...}{passed to tmst}
 }
 \value{
-
+dunno
 }
 \description{
 here-paste-tmst

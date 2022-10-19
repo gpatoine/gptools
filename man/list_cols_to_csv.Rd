@@ -13,9 +13,6 @@ list_cols_to_csv(df, file_path, ...)
 
 \item{...}{passed to write_excel_csv}
 }
-\value{
-
-}
 \description{
 list_cols_to_csv
 }
