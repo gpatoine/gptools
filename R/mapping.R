@@ -270,7 +270,7 @@ gp_open_gmaps <- function(point){
 #'
 #' @return ggplot
 #' @export
-gp_gplot <- function(x, maxpixels = 5e+4, filt_val = NULL) { #, ...
+gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) { #, ...
 
   x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
 
@@ -287,6 +287,7 @@ gp_gplot <- function(x, maxpixels = 5e+4, filt_val = NULL) { #, ...
   ggplot2::ggplot(data=dat, ggplot2::aes(x = x, y = y))+ #, ...
     ggplot2::geom_raster(ggplot2::aes(fill = value))+
     ggplot2::scale_fill_viridis_c(na.value = NA)+
-    ggplot2::coord_fixed()
+    ggplot2::coord_fixed()+
+    ggplot2::ggtitle(title)
 
 }

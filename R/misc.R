@@ -472,7 +472,7 @@ ignore <- function(...) {
 #' @export
 show_cor <- function(df) {
 
-  df <- df %>% select(where(is.numeric))
+  df <- df %>% dplyr::select(tidyselect::where(is.numeric))
 
   M = cor(df, use = "pairwise.complete")
   testRes = corrplot::cor.mtest(df, conf.level = 0.95)
@@ -506,7 +506,7 @@ show_cor <- function(df) {
 #' @export
 show_heat <- function(df, rows) {
 
-  df <- df %>% select(where(is.numeric))
+  df <- df %>% dplyr::select(tidyselect::where(is.numeric))
 
   M = cor(df, use = "pairwise.complete")
   testRes = corrplot::cor.mtest(df, conf.level = 0.95)
