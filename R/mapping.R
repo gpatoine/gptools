@@ -216,7 +216,9 @@ gp_point_ras <- function(point, ras, dist = 8000, type = c("mapview", "ggplot"))
 
   if (type == "mapview") {
 
-    mapview::mapview(x_sub) +
+    # method argument needed to avoid reprojection and wrong NA values
+    # see: https://github.com/r-spatial/mapview/issues/123
+    mapview::mapview(x_sub, method = "ngb") +
       mapview::mapview(point)
 
   } else {
@@ -271,6 +273,8 @@ gp_open_gmaps <- function(point){
 #' @return ggplot
 #' @export
 gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) { #, ...
+
+  # NOTE could use basename(filename(r)) to avoid replacing - with ., but then won't work for rasterStack
 
   x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
 
