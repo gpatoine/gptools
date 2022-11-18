@@ -266,7 +266,9 @@ gp_open_gmaps <- function(point){
 #' as opposed to the rasterVis implementation, this version does all the work
 #' already of setting geom_raster, scale_fill and coord_fixed
 #'
-#' @param x a RasterLayer
+#' Not implemented for RasterStack
+#'
+#' @param x a RasterLayer or SpatRaster
 #' @param maxpixels Maximum number of pixels to use
 #' @param filt_val filter value for categorical raster
 #'
@@ -276,12 +278,37 @@ gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) 
 
   # NOTE could use basename(filename(r)) to avoid replacing - with ., but then won't work for rasterStack
 
-  x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
+  x0 <- x
 
-  coords <- xyFromCell(x, seq_len(ncell(x)))
-  dat <- utils::stack(as.data.frame(raster::values(x)))
-  names(dat) <- c('value', 'variable')
-  dat <- cbind(coords, dat)
+  if (inherits(x, "RasterLayer")) {
+
+    x <- raster::sampleRegular(x, maxpixels, asRaster = TRUE)
+
+    coords <- raster::xyFromCell(x, seq_len(ncell(x)))
+    dat <- utils::stack(as.data.frame(raster::values(x)))
+    names(dat) <- c('value', 'variable')
+    dat <- cbind(coords, dat)
+
+    subt <- paste0("gain: ", raster::gain(x0), ", offs: ", raster::offs(x0))
+
+
+  } else if (inherits(x, "SpatRaster")) {
+
+    # plot only the first layer
+    if (terra::nlyr(x) > 1) x <- x[[1]]
+
+    x <- terra::spatSample(x, maxpixels, "regular", as.raster = TRUE)
+
+    coords <- terra::xyFromCell(x, seq_len(terra::ncell(x)))
+    dat <- utils::stack(as.data.frame(terra::values(x)))
+    names(dat) <- c('value', 'variable')
+    dat <- cbind(coords, dat)
+
+    subt <- scoff(t) %>% paste(colnames(.), ., sep = ": ", collapse = ", ")
+
+
+  } else stop("Wrong class")
+
   # dat$value %>% unique
 
   if (!is.null(filt_val)) {
@@ -292,6 +319,6 @@ gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) 
     ggplot2::geom_raster(ggplot2::aes(fill = value))+
     ggplot2::scale_fill_viridis_c(na.value = NA)+
     ggplot2::coord_fixed()+
-    ggplot2::ggtitle(title)
+    ggplot2::ggtitle(title, subt)
 
 }
