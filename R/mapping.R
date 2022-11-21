@@ -295,7 +295,10 @@ gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) 
   } else if (inherits(x, "SpatRaster")) {
 
     # plot only the first layer
-    if (terra::nlyr(x) > 1) x <- x[[1]]
+    if (terra::nlyr(x) > 1) {
+      x <- x[[1]]
+      warning("SpatRaster has many layers. Only first layer shown.")
+    }
 
     x <- terra::spatSample(x, maxpixels, "regular", as.raster = TRUE)
 
@@ -304,7 +307,7 @@ gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) 
     names(dat) <- c('value', 'variable')
     dat <- cbind(coords, dat)
 
-    subt <- scoff(t) %>% paste(colnames(.), ., sep = ": ", collapse = ", ")
+    subt <- terra::scoff(x) %>% paste(colnames(.), ., sep = ": ", collapse = ", ")
 
 
   } else stop("Wrong class")
