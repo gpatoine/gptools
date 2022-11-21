@@ -307,7 +307,7 @@ gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) 
     names(dat) <- c('value', 'variable')
     dat <- cbind(coords, dat)
 
-    subt <- terra::scoff(x) %>% paste(colnames(.), ., sep = ": ", collapse = ", ")
+    subt <- terra::scoff(x0) %>% paste(colnames(.), ., sep = ": ", collapse = ", ")
 
 
   } else stop("Wrong class")
