@@ -81,14 +81,16 @@ hptmst <- function(dir, main, ext, ...) {
 #'
 #' @param fold folder path
 #' @param pattern regex pattern passed to list.files
-#' @param load logical wanna load to file or just get it's name. use FALSE if the file is not rds format
+#' @param load logical use TRUE to load RDS file
 #' @param prev int previous version before last
 #'
-#' @return R object read from RDS file
+#' @return file path or R object read from RDS file
 #' @export
 last_tmst <- function(fold, pattern = "", load = TRUE, prev = 0) {
   files <- list.files(fold, pattern = pattern, full.names = TRUE)
   file <- files %>% sort(TRUE) %>% .[1 + prev]
+
+  if (!fs::file_exists(file)) stop("No matching file found.")
 
   if (load & tools::file_ext(file) == "rds") {
     message("Reading ", basename(file))
