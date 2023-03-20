@@ -11,12 +11,12 @@ last_tmst(fold, pattern = "", load = TRUE, prev = 0)
 
 \item{pattern}{regex pattern passed to list.files}
 
-\item{load}{logical wanna load to file or just get it's name. use FALSE if the file is not rds format}
+\item{load}{logical use TRUE to load RDS file}
 
 \item{prev}{int previous version before last}
 }
 \value{
-R object read from RDS file
+file path or R object read from RDS file
 }
 \description{
 Read last timestamped (RDS) file

@@ -4,10 +4,10 @@
 \alias{gp_gplot}
 \title{gplot from rasterVis hacked}
 \usage{
-gp_gplot(x, maxpixels = 50000, filt_val = NULL)
+gp_gplot(x, maxpixels = 50000, title = names(x)[1], filt_val = NULL)
 }
 \arguments{
-\item{x}{a RasterLayer}
+\item{x}{a RasterLayer or SpatRaster}
 
 \item{maxpixels}{Maximum number of pixels to use}
 
@@ -20,4 +20,7 @@ ggplot
 see https://github.com/oscarperpinan/rastervis/blob/master/R/gplot.R
 as opposed to the rasterVis implementation, this version does all the work
 already of setting geom_raster, scale_fill and coord_fixed
+}
+\details{
+Not implemented for RasterStack
 }
