@@ -16,7 +16,7 @@ coldesc <- function(df, view = FALSE){
       paste(length(unique(x)), "levels")
 
     } else if (inherits(x, "Date")) {
-      paste(range(x), collapse = " to ")
+      paste(range(x, na.rm = TRUE), collapse = " to ")
 
     } else {
       NA

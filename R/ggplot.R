@@ -24,12 +24,12 @@ one1_line <- function() {
 #' @export
 plot_corr <- function(data, x, y) {
 
-  corr <- data %>% select({{x}}, {{y}}) %>% cor(use = "complete") %>% .[2,1] %>% round(3)
+  corr <- data %>% dplyr::select({{x}}, {{y}}) %>% cor(use = "complete") %>% .[2,1] %>% round(3)
 
-  ggplot(data, aes({{x}}, {{y}}))+
-    geom_point()+
-    geom_abline(slope = 1)+
-    annotate(geom = "text", x = -Inf, y = Inf,
+  ggplot2::ggplot(data, ggplot2::aes({{x}}, {{y}}))+
+    ggplot2::geom_point()+
+    ggplot2::geom_abline(slope = 1)+
+    ggplot2::annotate(geom = "text", x = -Inf, y = Inf,
              label = paste0("r = ", corr),
              hjust = -0.1, vjust = 1.1)
 

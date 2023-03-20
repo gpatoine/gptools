@@ -178,6 +178,11 @@ gp_point_ras <- function(point, ras, dist = 8000, type = c("mapview", "ggplot"))
     point <- make_sf_wgs84(point)
   }
 
+  # NOTE quick fix to use terra, could also implement all with terra
+  if (inherits(ras, "SpatRaster")) {
+    ras <- raster::raster(ras)
+  }
+
   type <- match.arg(type)
 
   # extract cell with buffer
@@ -321,7 +326,9 @@ gp_gplot <- function(x, maxpixels = 5e+4, title = names(x)[1], filt_val = NULL) 
   ggplot2::ggplot(data=dat, ggplot2::aes(x = x, y = y))+ #, ...
     ggplot2::geom_raster(ggplot2::aes(fill = value))+
     ggplot2::scale_fill_viridis_c(na.value = NA)+
-    ggplot2::coord_fixed()+
-    ggplot2::ggtitle(title, subt)
+    ggplot2::coord_fixed()+ #expand = FALSE
+    ggplot2::ggtitle(title, subt)+
+    ggplot2::scale_x_continuous(breaks = c(-120, -60, 0, 60, 120), expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(breaks = c(-60, -30, 0, 30, 60), expand = c(0, 0))
 
 }
