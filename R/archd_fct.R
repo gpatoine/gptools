@@ -152,7 +152,7 @@ ad_to_date <- function(file, fold_path = default_fold(file)){
 #' @param fold_path fold
 #' @param look_back positive integer. zero is the lsv, higher numbers for earlier versions
 #'
-#' @return
+#' @return ?
 #' @export
 ad_lsv <- function(file, fold_path = default_fold(file), look_back = 0){
   # look_back is 0 for lsv, and increases for earlier version. no negative numbers
@@ -237,7 +237,7 @@ same_file <- function(file1, file2){
 #' @param file chr path
 #' @param ts_path chr path
 #'
-#' @return
+#' @return ?
 #' @export
 create_log <- function(file, ts_path){
 
@@ -260,7 +260,7 @@ create_log <- function(file, ts_path){
 #' @param fold_path fold
 #' @param method chr
 #'
-#' @return
+#' @return ?
 #' @export
 update_log <- function(file, fold_path, method = NA){
 
@@ -329,7 +329,7 @@ comp_dfs <- function(df1, df2){
 #' @param file_path chr
 #' @param ... passed to write_excel_csv
 #'
-#' @return
+#' @return ?
 #' @export
 list_cols_to_csv <- function(df, file_path, ...) {
   #

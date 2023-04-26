@@ -3,7 +3,7 @@
 #'
 #' @param df
 #'
-#' @return
+#' @return ?
 #' @export
 make_flag_col <- function(df) {
   df <- tibble::as.tibble(df)
@@ -21,7 +21,7 @@ make_flag_col <- function(df) {
 #' @param id id
 #' @param new_flag
 #'
-#' @return
+#' @return ?
 #' @export
 add_flag <- function(df, id, new_flag){
 
@@ -53,7 +53,7 @@ add_flag <- function(df, id, new_flag){
 #' @param df data.frame
 #' @param id id
 #'
-#' @return
+#' @return ?
 #' @export
 get_flag <- function(df, id) {
   df$flag[df$New_ID == id][[1]]

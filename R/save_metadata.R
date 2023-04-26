@@ -19,7 +19,7 @@
 #' @param FUN function used for saving. Default is saveRDS.
 #' @param ... additional arguments passed to FUN
 #'
-#' @return
+#' @return NULL
 #' @export
 saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) { #ovr_today = FALSE,
 
@@ -55,7 +55,7 @@ saveme <- function(x, file, comment = NULL, FUN = saveRDS, ...) { #ovr_today = F
 #' @param comment character
 #' @param ... additional arguments passed to ggsave
 #'
-#' @return
+#' @return ?
 #' @export
 ggsaveme <- function(filename, plot = NULL, comment = NULL,...) {
 
@@ -85,7 +85,7 @@ ggsaveme <- function(filename, plot = NULL, comment = NULL,...) {
 #' @param comment character
 #' @param obj_name only used if called internally
 #'
-#' @return
+#' @return ?
 #' @export
 record_meta <- function(x, file, comment = NULL, obj_name = NULL) {
 

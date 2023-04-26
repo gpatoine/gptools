@@ -105,7 +105,15 @@ gp_stitch <- function(script = NULL,
   })
   on.exit(knitr::knit_hooks$restore(), add = TRUE)
   # out = knitr::knit(input, hptmst("stitch", tools::file_path_sans_ext(basename(input)), "md"), envir = envir, text = txt) #changed output path
-  out = knitr::knit(input, file.path(tmpdir, xfun::with_ext(basename(input), "md")), envir = envir, text = txt)
+
+  # FIXME coldesc_dt won't display properly, table saved as png
+  # out = knitr::knit(input, file.path(tmpdir, xfun::with_ext(basename(input), "md")), envir = envir, text = txt)
+
+  # try to go from txt to rmd and html directly
+  rmd_temp <- file.path(tmpdir, xfun::with_ext(basename(input), "Rmd"))
+  write_lines(txt, rmd_temp)
+
+
 
   # switch(file_ext(out), tex = {
   #   tinytex::latexmk(out)
@@ -125,7 +133,12 @@ gp_stitch <- function(script = NULL,
   }
 
   out.html = hptmst("stitch", tools::file_path_sans_ext(basename(input)), "html")
-  markdown::markdownToHTML(out, out.html)
+
+
+  # then use this instead of markdown::markdownToHTML
+  rmarkdown::render(rmd_temp, output_format = "html_document", output_file = out.html)
+
+  # markdown::markdownToHTML(out, out.html)
   message("HTML output at: ", out.html)
   # })
 

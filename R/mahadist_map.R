@@ -98,7 +98,7 @@ mahadist <- function (dat, world, vars, xy = c("X", "Y")){
 #' @param dat data
 #' @param xy coordinate columns
 #'
-#' @return
+#' @return gpplot
 #' @export
 mahamap <- function (dat, xy = c("X", "Y")){
   worldmap <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
