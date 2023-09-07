@@ -490,9 +490,8 @@ extract_nearest_value_terra <- function(x, point, max_range = NULL, .as_na = NUL
     # if many mins, pick one
     min_cells <- terra::where.min(dist) %>% as_tibble
     min_cell <- min_cells %>% slice_sample(n = 1)
-    values(x_sub)[min_cell$cell]
 
-    data.frame(near_val = near_val,
+    data.frame(near_val = values(x_sub)[min_cell$cell],
                dist_cell = min_cell %>% pull(value))
 
   }
